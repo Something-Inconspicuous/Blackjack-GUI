@@ -42,7 +42,7 @@ class Main{
 
     private static void runGUI(){
         JFrame.setDefaultLookAndFeelDecorated(true);
-        Main gui = new Main(); //ignore this error
+        new Main(); //ignore this error
     }
   
     public static void main(String[] args) {
