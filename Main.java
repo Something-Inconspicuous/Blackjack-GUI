@@ -74,7 +74,7 @@ class Main{
 
     private static void runGUI(){
         JFrame.setDefaultLookAndFeelDecorated(true);
-        new Main(); //this... works
+        new Main();
     }
   
     public static void main(String[] args) {
