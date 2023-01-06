@@ -97,4 +97,31 @@ public class Card {
 
         return output;
     }
+
+    /**
+     * Returns the link to the image of the card
+     * 
+     * @return {@code String} the imageurl of the image of the card
+     */
+    public String toImageLink(){
+        //TODO: add images
+        String link = this.toString();
+
+        link = link.toLowerCase().replaceAll(" ", "") + ".png";
+        //I plan to have all of the card images follow the pattenn of "faceofsuit.png"
+
+        return link;
+    }
+
+    /**
+     * Returns the link of the image of a card of given suit and face
+     * 
+     * @param suit -- {@code int} the suit of the card image wanted
+     * @param face -- {@code int} the face of the card image wanted
+     * @return {@code String} the imagurl of a card with given suit and face
+     * @see #toImageLink()
+     */
+    public static String toImageLink(int suit, int face){
+        return (new Card(suit, face)).toImageLink();
+    }
 }

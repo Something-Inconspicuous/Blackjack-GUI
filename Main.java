@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 
+import java.util.ArrayList;
+
 class Main{
     // TODO: make multiplayer
     // BACKEND
@@ -14,35 +16,65 @@ class Main{
     
     // TODO: design and create front end
     // FRONTEND
+    //GridBagLayout is confusing, but it's fine
+    GridBagLayout layout = new GridBagLayout();
+    GridBagConstraints gbc = new GridBagConstraints();
+
     JFrame frame;
     JPanel pane;
 
-    JLabel tempLabel;
-    JButton tempButton;
+    //Start menu components
+    JLabel titleLabel;
+    JButton startButton;
+    //JImageIcon titleImage; //potential for an image on the title screen, idk
 
-
+    //Main game components
+    ArrayList<Image> cardImages;
+    ArrayList<ArrayList<Image>> allCardImages; //it looks really dumb, but it works in theory, so lets go with it
 
     public Main(){
         frame = new JFrame("Blackjack");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         pane = new JPanel();
+        pane.setLayout(layout);
 
-        tempLabel = new JLabel("TEST");
-        tempButton = new JButton("Hello World");
+        titleLabel = new JLabel("Blackjack");
+        startButton = new JButton("GO!");
 
-        pane.add(tempLabel);
-        pane.add(tempButton);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        layout.setConstraints(titleLabel, gbc);
+        pane.add(titleLabel);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        layout.setConstraints(startButton, gbc);
+        startButton.addActionListener(new Click());
+        startButton.setActionCommand("start");
+        pane.add(startButton);
 
         frame.setContentPane(pane);
 
-        frame.setSize(200, 200);
+        frame.setSize(640, 480); //idk, thought 480p was a good resolution
         frame.setVisible(true);
+    }
+
+    //event handler for button clicks
+    class Click implements ActionListener{
+        public void actionPerformed(ActionEvent event){
+            switch(event.getActionCommand()){
+                case "start":
+                    startButton.setVisible(false);
+                    titleLabel.setVisible(false);
+                    break;
+            }
+        }
     }
 
     private static void runGUI(){
         JFrame.setDefaultLookAndFeelDecorated(true);
-        Main gui = new Main(); //ignore this error
+        new Main(); //this... works
     }
   
     public static void main(String[] args) {
