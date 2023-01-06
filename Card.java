@@ -1,26 +1,65 @@
+/**
+ * The {@code Card} class represents a single card per instance.
+ * <p>
+ * Each card stores its own suit and face as integers.
+ * These are stored privately, so use the below methods to access them.
+ * 
+ * @see #getFace()
+ * @see #getSuit()
+ */
 public class Card {
 
     private int suit, face;
     
+    /**
+     * Empty constructor, sets nothing
+     */
     public Card() {}
 
     /**
-     * Constructs a card object with specified suit and face
-     * @param suit -- Suit of card (int)
-     * @param face -- Face of card (int)
+     * Constructs a {@code Card} object with specified suit and face
+     * @param suit -- {@code int} Suit of card
+     * @param face -- {@code int} Face of card 
      */
     
      public Card(int suit, int face) {
         this.suit = suit;
         this.face = face;
     }
-   
+    
+    /**
+     * Returns the suit of the card
+     * <p>
+     * 
+     * The suit is stored as in integer as follows
+     * <ol>
+     *   <li>Clubs</li>
+     *   <li>Diamonds</li>
+     *   <li>Hearts</li>
+     *   <li>Spades</li>
+     * </ol> 
+     * 
+     * @return {@code int} the suit of the card as above
+     */
     public int getSuit() {
         return this.suit;
     }
+
+    /**
+     * Returns the face value of the card
+     * 
+     * @return {@code int} the face value of the card 
+     */
     public int getFace() {
         return this.face;
     }
+
+    /**
+     * Gives a {@code String} representation in the format of "Face of Suit"
+     *
+     * @return {@code String} the card as a String 
+     */
+    @Override
     public String toString() {
         String output = "";
         //add switch case that sets output to the face of the card
