@@ -8,9 +8,11 @@ import java.awt.event.*;
 import java.awt.*;
 
 class Main{
+    // TODO: make multiplayer
     // BACKEND
     private static Player user = new Player(); // for testing, will create multiple users later
     
+    // TODO: design and create front end
     // FRONTEND
     JFrame frame;
     JPanel pane;

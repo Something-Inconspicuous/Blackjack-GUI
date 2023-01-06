@@ -14,6 +14,8 @@ public class Player {
     this.name = name;
    }
    
+   // SECTION getters
+   
    /**
     * get how many chips a user has. Mostly for Calculate winner Function
     * @return amount of chips that the player has
@@ -36,7 +38,9 @@ public class Player {
    public String getName() {
     return name;
    }
-
+   // !SECTION
+   
+   // SECTION setters
    /**
     * Set user's bet
     * @param amount
@@ -44,5 +48,7 @@ public class Player {
    public void setBet(int amount) {
     betAmount =  amount;
    }
+
+   // !SECTION
     
 }
