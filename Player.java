@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 
 public class Player {
@@ -33,6 +34,10 @@ public class Player {
     public int getChipsAmount() {
         return chipsAmount;
     }
+
+   // SECTION getters
+   
+
     /**
      * Returns the amount the player has bet total
      * 
@@ -41,7 +46,7 @@ public class Player {
     public int getBetAmount() {
         return betAmount;
     }
-    
+   
     /**
      * Returns the player's name for added detail and immersion
      * 
@@ -50,7 +55,9 @@ public class Player {
     public String getName() {
         return name;
     }
-
+   // !SECTION
+   
+   // SECTION setters
     /**
      * Sets the amount of chips the player is betting to {@code amount}
      * @param amount -- the amount to bet
@@ -58,4 +65,7 @@ public class Player {
     public void setBet(int amount) {
         betAmount =  amount;
     }
+
+   // !SECTION
+    
 }
