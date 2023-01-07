@@ -5,12 +5,13 @@
 
 import javax.swing.*;
 
-import javafx.geometry.Insets;
+//import javafx.geometry.Insets; //invalid import appearently
 
 import java.awt.event.*;
 import java.awt.*;
 
 import java.util.ArrayList;
+import java.util.zip.InflaterOutputStream;
 
 class Main{
     // TODO: make multiplayer
@@ -26,6 +27,7 @@ class Main{
     GridBagConstraints gbc = new GridBagConstraints();
 
     JFrame frame;
+    JPanel contentPane;
     
 
     //Start menu components
@@ -46,6 +48,7 @@ class Main{
 
     JPanel playerSeats; //will display the player's panels
 
+    JPanel bottomPanel; //will display all of the info stuff
     JPanel infoPanel; //will display who's turn it is and the buttons to play the game
     JLabel infoLabel; //will display who's turn it is
     JPanel buttonsPanel; //will hold the buttons
@@ -59,9 +62,15 @@ class Main{
         frame = new JFrame("Blackjack");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        buildTitleScreen();
+        contentPane = new JPanel();
 
-        frame.setContentPane(titleScreen);
+        buildTitleScreen();
+        buildTable();
+
+        contentPane.add(titleScreen);
+        contentPane.add(gameScreen);
+        gameScreen.setVisible(false);
+        frame.setContentPane(contentPane);
 
         frame.setSize(640, 480); //idk, thought 480p was a good resolution
         frame.setVisible(true);
@@ -72,8 +81,9 @@ class Main{
         public void actionPerformed(ActionEvent event){
             switch(event.getActionCommand()){
                 case "start":
-                    startButton.setVisible(false);
-                    titleLabel.setVisible(false);
+                    titleScreen.setVisible(false);
+                    gameScreen.setVisible(true);
+                    
                     break;
 
                 case "hit":
@@ -119,7 +129,7 @@ class Main{
 
         startButton = new JButton("GO!");
 
-        gbc.insets = new java.awt.Insets(100, 0, 0, 0);
+        gbc.insets = new java.awt.Insets(0, 0, 50, 0);
         gbc.gridx = 0;
         gbc.gridy = 0;
         layout.setConstraints(titleLabel, gbc);
@@ -138,21 +148,50 @@ class Main{
         gameScreen = new JPanel();
         gameScreen.setLayout(new BoxLayout(gameScreen, BoxLayout.PAGE_AXIS));
 
+        bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.PAGE_AXIS));
+
         allSeats = new JPanel();
         allSeats.setLayout(new GridLayout(3, 3, 5, 5));
         //allSeats.setBounds(1, 1, 1, 1);
 
         seats = new JPanel[MAXPlAYERCOUNT];
-        for(JPanel seat : seats){
-            seat.setLayout(new FlowLayout()); //TODO: reminder: change the layout to work better
+        for(int i = 0; i < MAXPlAYERCOUNT; i++){
+            seats[i] = new JPanel(); 
+            //seat.setLayout(null); //TODO: reminder: change the layout to work better
         }
 
         dealerSeat = new JPanel();
 
         infoPanel = new JPanel();
-        infoLabel = new JLabel();
+        infoLabel = new JLabel("Placeholder");
 
         buttonsPanel = new JPanel();
 
+        hitButton = new JButton("Hit");
+        buttonsPanel.add(hitButton);
+
+        standButton = new JButton("Stand");
+        buttonsPanel.add(standButton);
+
+        splitButton = new JButton("Split");
+        buttonsPanel.add(splitButton);
+        
+        doubleButton = new JButton("Double Down");
+        buttonsPanel.add(doubleButton);
+        
+        infoPanel.add(infoLabel);
+
+        allSeats.add(seats[0]);
+        allSeats.add(dealerSeat);
+        for(int i = 1; i < seats.length; i++){
+            allSeats.add(seats[i]);
+        }
+
+        bottomPanel.add(infoPanel);
+        bottomPanel.add(buttonsPanel);
+
+        gameScreen.add(allSeats);
+        gameScreen.add(bottomPanel);
     }
 }
