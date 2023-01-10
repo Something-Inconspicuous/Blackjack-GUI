@@ -12,8 +12,8 @@ import java.util.ArrayList;
 class Main{
     // TODO: make multiplayer
     // BACKEND
-    private static Player user = new Player(); // for testing, will create multiple users later
-    
+    private static ArrayList<Player> players = new ArrayList<Player>();
+    private static final int defaultChips = 100;
     // TODO: design and create front end
     // FRONTEND
     //GridBagLayout is confusing, but it's fine
@@ -78,7 +78,15 @@ class Main{
     }
   
     public static void main(String[] args) {
-        System.out.println(user.getChipsAmount());
+        int playerNum = 2;
+        for (int i = 0; i < playerNum; i++) {
+            players.add(new Player(defaultChips, "Player " + (i + 1)));
+
+        }
+        for(Player p : players) {
+        System.out.println(p.getName());
+        System.out.println(p.getChipsAmount());
+        }
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 runGUI();
