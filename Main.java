@@ -34,19 +34,19 @@ class Main{
     JPanel titleScreen;
     JLabel titleLabel;
     JButton startButton;
-    //JImageIcon titleImage; //potential for an image on the title screen, idk
+    //JLabel titleImage; //potential for an image on the title screen, idk
 
     //Main game components
     JPanel gameScreen;
 
-    ArrayList<Image> cardImages;
-    ArrayList<ArrayList<Image>> allCardImages; //it looks really dumb, but it works in theory, so lets go with it
+    //ArrayList<Image> cardImages;
+    //ArrayList<ArrayList<Image>> allCardImages; //it looks really dumb, but it works in theory, so lets go with it
 
     JPanel allSeats;
-    JPanel[] seats; //each seat will will be a panel that display the player with the same index's stuff
-    JPanel dealerSeat; //the dealer's seat will be seperate
+    //JPanel[] seats; //each seat will will be a panel that display the player with the same index's stuff
+    //JPanel dealerSeat; //the dealer's seat will be seperate
 
-    JPanel playerSeats; //will display the player's panels
+    //JPanel playerSeats; //will display the player's panels
 
     JPanel bottomPanel; //will display all of the info stuff
     JPanel infoPanel; //will display who's turn it is and the buttons to play the game
@@ -155,13 +155,13 @@ class Main{
         allSeats.setLayout(new GridLayout(3, 3, 5, 5));
         //allSeats.setBounds(1, 1, 1, 1);
 
-        seats = new JPanel[MAXPlAYERCOUNT];
-        for(int i = 0; i < MAXPlAYERCOUNT; i++){
-            seats[i] = new JPanel(); 
+        //seats = new JPanel[MAXPlAYERCOUNT];
+        //for(int i = 0; i < MAXPlAYERCOUNT; i++){
+            //seats[i] = new JPanel(); 
             //seat.setLayout(null); //TODO: reminder: change the layout to work better
-        }
+        //}
 
-        dealerSeat = new JPanel();
+        //dealerSeat = new JPanel();
 
         infoPanel = new JPanel();
         infoLabel = new JLabel("Placeholder");
@@ -182,11 +182,11 @@ class Main{
         
         infoPanel.add(infoLabel);
 
-        allSeats.add(seats[0]);
-        allSeats.add(dealerSeat);
-        for(int i = 1; i < seats.length; i++){
-            allSeats.add(seats[i]);
-        }
+        //allSeats.add(seats[0]);
+        //allSeats.add(dealerSeat);
+        //for(int i = 1; i < seats.length; i++){
+            //allSeats.add(seats[i]);
+        //}
 
         bottomPanel.add(infoPanel);
         bottomPanel.add(buttonsPanel);

@@ -107,8 +107,8 @@ public class Card {
         //TODO: add images
         String link = this.toString();
 
-        link = link.toLowerCase().replaceAll(" ", "") + ".png";
-        //I plan to have all of the card images follow the pattenn of "faceofsuit.png"
+        link = "image/" + link.toLowerCase().replaceAll(" ", "") + ".png";
+        //all of the card images follow the pattern of "faceofsuit.png"
 
         return link;
     }
