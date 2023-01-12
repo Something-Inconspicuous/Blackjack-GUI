@@ -2,6 +2,8 @@
 import java.util.ArrayList;
 
 public class Player {
+    private Seat seat;
+
     private int chipsAmount;
     private int betAmount;
     private String name;
@@ -25,6 +27,7 @@ public class Player {
     public Player(int amount, String name) {
         chipsAmount = amount;
         this.name = name;
+        seat = new Seat(this.name);
     }
     
     /**
@@ -55,6 +58,10 @@ public class Player {
     public String getName() {
         return name;
     }
+
+    public Seat getSeat(){
+        return seat;
+    }
    // !SECTION
    
    // SECTION setters
@@ -67,4 +74,8 @@ public class Player {
     }
 
    // !SECTION
+
+   public void updateSeat(){
+    
+   }
 }

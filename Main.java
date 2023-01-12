@@ -4,15 +4,22 @@
  */
 
 import javax.swing.*;
+
+//import javafx.geometry.Insets; //invalid import appearently
+
 import java.awt.event.*;
 import java.awt.*;
 
 import java.util.ArrayList;
+import java.util.zip.InflaterOutputStream;
 
 class Main{
     // BACKEND
+    private static final int MAXPlAYERCOUNT = 7;
+
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static final int defaultChips = 100;
+
     // TODO: design and create front end
     // FRONTEND
     // GridBagLayout is confusing, but it's fine
@@ -20,40 +27,50 @@ class Main{
     GridBagConstraints gbc = new GridBagConstraints();
 
     JFrame frame;
-    JPanel pane;
+    JPanel contentPane;
+    
 
     //Start menu components
+    JPanel titleScreen;
     JLabel titleLabel;
     JButton startButton;
-    //JImageIcon titleImage; //potential for an image on the title screen, idk
+    //JLabel titleImage; //potential for an image on the title screen, idk
 
     //Main game components
-    ArrayList<Image> cardImages;
-    ArrayList<ArrayList<Image>> allCardImages; //it looks really dumb, but it works in theory, so lets go with it
+    JPanel gameScreen;
+
+    //ArrayList<Image> cardImages;
+    //ArrayList<ArrayList<Image>> allCardImages; //it looks really dumb, but it works in theory, so lets go with it
+
+    JPanel allSeats;
+    //JPanel[] seats; //each seat will will be a panel that display the player with the same index's stuff
+    //JPanel dealerSeat; //the dealer's seat will be seperate
+
+    //JPanel playerSeats; //will display the player's panels
+
+    JPanel bottomPanel; //will display all of the info stuff
+    JPanel infoPanel; //will display who's turn it is and the buttons to play the game
+    JLabel infoLabel; //will display who's turn it is
+    JPanel buttonsPanel; //will hold the buttons
+
+    JButton hitButton;
+    JButton standButton;
+    JButton splitButton;
+    JButton doubleButton;
 
     public Main(){
         frame = new JFrame("Blackjack");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        pane = new JPanel();
-        pane.setLayout(layout);
+        contentPane = new JPanel();
 
-        titleLabel = new JLabel("Blackjack");
-        startButton = new JButton("GO!");
+        buildTitleScreen();
+        buildTable();
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        layout.setConstraints(titleLabel, gbc);
-        pane.add(titleLabel);
-
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        layout.setConstraints(startButton, gbc);
-        startButton.addActionListener(new Click());
-        startButton.setActionCommand("start");
-        pane.add(startButton);
-
-        frame.setContentPane(pane);
+        contentPane.add(titleScreen);
+        contentPane.add(gameScreen);
+        gameScreen.setVisible(false);
+        frame.setContentPane(contentPane);
 
         frame.setSize(640, 480); //idk, thought 480p was a good resolution
         frame.setVisible(true);
@@ -64,9 +81,25 @@ class Main{
         public void actionPerformed(ActionEvent event){
             switch(event.getActionCommand()){
                 case "start":
-                    startButton.setVisible(false);
-                    titleLabel.setVisible(false);
+                    titleScreen.setVisible(false);
+                    gameScreen.setVisible(true);
+                    
                     break;
+
+                case "hit":
+                    //TODO: hit code
+                    break;
+
+                case "stand":
+                    //TODO: stand code
+                    break;
+
+                case "split":
+                    //TODO: split code
+                    break;
+                
+                case "double":
+                    //TODO: double down code
             }
         }
     }
@@ -91,5 +124,82 @@ class Main{
                 runGUI();
             }
         });
+    }
+
+    //SECTION screen build methods
+    private void buildTitleScreen(){
+        titleScreen = new JPanel();
+        //titleScreen.setLayout(null);
+        titleScreen.setLayout(layout);
+
+        titleLabel = new JLabel("Blackjack");
+        //titleLabel.setBounds(100, 30, 120, 50);
+
+        startButton = new JButton("GO!");
+
+        gbc.insets = new java.awt.Insets(0, 0, 50, 0);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        layout.setConstraints(titleLabel, gbc);
+        titleScreen.add(titleLabel);
+
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        layout.setConstraints(startButton, gbc);
+        startButton.addActionListener(new Click());
+        startButton.setActionCommand("start");
+        titleScreen.add(startButton);
+    }
+
+    private void buildTable(){
+        gameScreen = new JPanel();
+        gameScreen.setLayout(new BoxLayout(gameScreen, BoxLayout.PAGE_AXIS));
+
+        bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.PAGE_AXIS));
+
+        allSeats = new JPanel();
+        allSeats.setLayout(new GridLayout(3, 3, 5, 5));
+        //allSeats.setBounds(1, 1, 1, 1);
+
+        //seats = new JPanel[MAXPlAYERCOUNT];
+        //for(int i = 0; i < MAXPlAYERCOUNT; i++){
+            //seats[i] = new JPanel(); 
+            //seat.setLayout(null); //TODO: reminder: change the layout to work better
+        //}
+
+        //dealerSeat = new JPanel();
+
+        infoPanel = new JPanel();
+        infoLabel = new JLabel("Placeholder");
+
+        buttonsPanel = new JPanel();
+
+        hitButton = new JButton("Hit");
+        buttonsPanel.add(hitButton);
+
+        standButton = new JButton("Stand");
+        buttonsPanel.add(standButton);
+
+        splitButton = new JButton("Split");
+        buttonsPanel.add(splitButton);
+        
+        doubleButton = new JButton("Double Down");
+        buttonsPanel.add(doubleButton);
+        
+        infoPanel.add(infoLabel);
+
+        //allSeats.add(seats[0]);
+        //allSeats.add(dealerSeat);
+        //for(int i = 1; i < seats.length; i++){
+            //allSeats.add(seats[i]);
+        //}
+
+        bottomPanel.add(infoPanel);
+        bottomPanel.add(buttonsPanel);
+
+        gameScreen.add(allSeats);
+        gameScreen.add(bottomPanel);
     }
 }
