@@ -10,13 +10,12 @@ import java.awt.*;
 import java.util.ArrayList;
 
 class Main{
-    // TODO: make multiplayer
     // BACKEND
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static final int defaultChips = 100;
     // TODO: design and create front end
     // FRONTEND
-    //GridBagLayout is confusing, but it's fine
+    // GridBagLayout is confusing, but it's fine
     GridBagLayout layout = new GridBagLayout();
     GridBagConstraints gbc = new GridBagConstraints();
 
