@@ -69,7 +69,7 @@ class Main{
         gameScreen.setVisible(false);
         frame.setContentPane(contentPane);
 
-        frame.setSize(1280, 720); //bump up to 720p
+        frame.setSize(1280, 720); //increased from 480p to 720p
         frame.setVisible(true);
     }
 
