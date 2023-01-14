@@ -11,19 +11,19 @@ import java.util.ArrayList;
  * @see Player
  */
 public class Seat {
-    JPanel mainPane;
+    private JPanel mainPane;
 
-    JPanel playerInfoPanel;
-    JLabel nameLabel;
-    JLabel chipsLabel;
-    JLabel betLabel;
+    private JPanel playerInfoPanel;
+    private JLabel nameLabel;
+    private JLabel chipsLabel;
+    private JLabel betLabel;
 
-    JPanel cardsPanel;
-    JPanel handPanel;
-    JPanel splitPanel;
+    private JPanel cardsPanel;
+    private JPanel handPanel;
+    private JPanel splitPanel;
 
-    ArrayList<JLabel> handCards;
-    ArrayList<JLabel> splitCards;
+    private ArrayList<JLabel> handCards;
+    private ArrayList<JLabel> splitCards;
 
     /**
      * Constructs a {@code Seat} object to hold everything that an individual seat at the tabel would need to hold
@@ -36,21 +36,30 @@ public class Seat {
         playerInfoPanel = new JPanel();
         playerInfoPanel.setLayout(new GridLayout(2, 2, 0, 0));
         nameLabel = new JLabel("Name: " + name);
-        chipsLabel = new JLabel();
+        chipsLabel = new JLabel("Chips: ");
+        betLabel = new JLabel("Bet: ");
 
         playerInfoPanel.add(nameLabel);
         playerInfoPanel.add(new JLabel()); //add an empty label to have the name on the topo and the chips info on bottom
         playerInfoPanel.add(chipsLabel);
+        playerInfoPanel.add(betLabel);
 
         cardsPanel = new JPanel();
+        cardsPanel.setLayout(new BoxLayout(cardsPanel, BoxLayout.PAGE_AXIS));
         
         handPanel = new JPanel();
-        handPanel.setLayout(new GridLayout(6, 2, 0, 0));
+        handPanel.setLayout(new GridLayout(2, 6, 0, 0));
 
         splitPanel = new JPanel();
-        splitPanel.setLayout(new GridLayout(6, 2, 0, 0));
+        splitPanel.setLayout(new GridLayout(2, 6, 0, 0));
+        
+        cardsPanel.add(handPanel);
+        cardsPanel.add(splitPanel);
 
-        mainPane.add(nameLabel);
+        handCards = new ArrayList<JLabel>();
+        splitCards = new ArrayList<JLabel>();
+
+        mainPane.add(playerInfoPanel);
         mainPane.add(cardsPanel);
         mainPane.add(splitPanel);
     }
@@ -64,6 +73,14 @@ public class Seat {
     }
 
     /**
+     * Updates the display to display the current bet
+     * @param bet -- {@code int} the bet to display
+     */
+    public void updateBet(int bet){
+        betLabel.setText("Bet: " + bet);
+    }
+
+    /**
      * Adds a card to the displayed hand of the seat
      * @param card -- {@code Card} the card to add
      */
@@ -71,7 +88,19 @@ public class Seat {
         ImageIcon cardIcon = new ImageIcon(card.toImageLink());
 
         handCards.add(new JLabel(cardIcon));
+        //System.out.println("added " + cardIcon);
         handPanel.add(new JLabel(cardIcon));
+    }
+
+    /**
+     * Adds a card to the displayed split hand of the seat
+     * @param card -- {@code Card} the card to add
+     */
+    public void addSplit(Card card){
+        ImageIcon cardIcon = new ImageIcon(card.toImageLink());
+
+        splitCards.add(new JLabel(cardIcon));
+        splitPanel.add(new JLabel(cardIcon));
     }
 
     /**
@@ -87,5 +116,9 @@ public class Seat {
             splitPanel.remove(label);
             splitCards.remove(label);
         }
+    }
+
+    public JPanel getDisplay(){
+        return mainPane;
     }
 }

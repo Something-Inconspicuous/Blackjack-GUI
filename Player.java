@@ -28,6 +28,7 @@ public class Player {
         chipsAmount = amount;
         this.name = name;
         seat = new Seat(this.name);
+        seat.updateChips(chipsAmount);
     }
     
     /**

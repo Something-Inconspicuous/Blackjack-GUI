@@ -4,19 +4,15 @@
  */
 
 import javax.swing.*;
-
-//import javafx.geometry.Insets; //invalid import appearently
-
 import java.awt.event.*;
 import java.awt.*;
 
 import java.util.ArrayList;
-import java.util.zip.InflaterOutputStream;
 
 class Main{
     // TODO: make multiplayer
     // BACKEND
-    private static final int MAXPlAYERCOUNT = 7;
+    private static final int MAXPlAYERCOUNT = 8;
 
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static final int defaultChips = 100;
@@ -80,8 +76,16 @@ class Main{
     //event handler for button clicks
     class Click implements ActionListener{
         public void actionPerformed(ActionEvent event){
+            //System.out.println(event.getActionCommand());
             switch(event.getActionCommand()){
                 case "start":
+                    for(Player p : players) {
+                        //p.getSeat().addCard(new Card(4, 2));
+                        //p.getSeat().addCard(new Card(4, 2));
+                        //p.getSeat().getDisplay();
+                        allSeats.add(p.getSeat().getDisplay());
+                      
+                    }
                     titleScreen.setVisible(false);
                     gameScreen.setVisible(true);
                     
@@ -89,6 +93,11 @@ class Main{
 
                 case "hit":
                     //TODO: hit code
+                    players.get(0).getSeat().addCard(new Card(4, 2)); //testing
+
+
+
+                    gameScreen.revalidate();
                     break;
 
                 case "stand":
@@ -111,15 +120,13 @@ class Main{
     }
   
     public static void main(String[] args) {
-        int playerNum = 2;
-        for (int i = 0; i < playerNum; i++) {
+        for (int i = 0; i < MAXPlAYERCOUNT; i++) {
             players.add(new Player(defaultChips, "Player " + (i + 1)));
 
         }
-        for(Player p : players) {
-        System.out.println(p.getName());
-        System.out.println(p.getChipsAmount());
-        }
+        
+
+
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 runGUI();
@@ -173,11 +180,13 @@ class Main{
         //dealerSeat = new JPanel();
 
         infoPanel = new JPanel();
-        infoLabel = new JLabel("Placeholder");
+        infoLabel = new JLabel(players.get(0).getName() + " with " + players.get(0).getBetAmount()); //change to hand value
 
         buttonsPanel = new JPanel();
 
         hitButton = new JButton("Hit");
+        hitButton.setActionCommand("hit");
+        hitButton.addActionListener(new Click());
         buttonsPanel.add(hitButton);
 
         standButton = new JButton("Stand");
