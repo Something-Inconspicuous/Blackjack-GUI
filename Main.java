@@ -73,7 +73,7 @@ class Main{
         gameScreen.setVisible(false);
         frame.setContentPane(contentPane);
 
-        frame.setSize(640, 480); //idk, thought 480p was a good resolution
+        frame.setSize(1280, 720); //increased from 480p to 720p
         frame.setVisible(true);
     }
 
