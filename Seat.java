@@ -22,8 +22,10 @@ public class Seat {
     private JPanel handPanel;
     private JPanel splitPanel;
 
+
     private ArrayList<JLabel> handCards;
     private ArrayList<JLabel> splitCards;
+    
 
     /**
      * Constructs a {@code Seat} object to hold everything that an individual seat at the tabel would need to hold
@@ -89,7 +91,7 @@ public class Seat {
 
         handCards.add(new JLabel(cardIcon));
         //System.out.println("added " + cardIcon);
-        handPanel.add(new JLabel(cardIcon));
+        handPanel.add(handCards.get(handCards.size() - 1));
     }
 
     /**
@@ -100,7 +102,7 @@ public class Seat {
         ImageIcon cardIcon = new ImageIcon(card.toImageLink());
 
         splitCards.add(new JLabel(cardIcon));
-        splitPanel.add(new JLabel(cardIcon));
+        splitPanel.add(splitCards.get(splitCards.size() - 1));
     }
 
     /**
@@ -109,13 +111,14 @@ public class Seat {
     public void clearCards(){
         for(JLabel label: handCards){
             handPanel.remove(label);
-            handCards.remove(label);
         }
 
         for(JLabel label: splitCards){
             splitPanel.remove(label);
-            splitCards.remove(label);
         }
+
+        handCards = new ArrayList<JLabel>();
+        splitCards = new ArrayList<JLabel>();
     }
 
     public JPanel getDisplay(){

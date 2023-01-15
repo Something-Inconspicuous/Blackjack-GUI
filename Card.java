@@ -124,7 +124,6 @@ public class Card {
      * @return {@code String} the imageurl of the image of the card
      */
     public String toImageLink(){
-        //TODO: add images
         String link = this.toString();
 
         link = "images/" + link.toLowerCase().replaceAll(" ", "") + ".png";

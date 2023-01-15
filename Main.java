@@ -11,11 +11,20 @@ import java.util.ArrayList;
 
 class Main{
     // TODO: make multiplayer
+    //TODO: betting
     // BACKEND
     private static final int MAXPlAYERCOUNT = 8;
+    private static final int defaultChips = 100;
+
+    /**
+     * Will store the index in {@link #players} that corrosponds to the current player to take their turn is
+     */
+    private static int currentPlayerIndex = 0;
 
     private static ArrayList<Player> players = new ArrayList<Player>();
-    private static final int defaultChips = 100;
+    private static Player dealer = new Player(0, "Dealer");
+    private static Deck deck = new Deck();
+    
 
     // TODO: design and create front end
     // FRONTEND
@@ -24,7 +33,7 @@ class Main{
     GridBagConstraints gbc = new GridBagConstraints();
 
     JFrame frame;
-    JPanel contentPane;
+    JLabel contentPane;
     
 
     //Start menu components
@@ -59,41 +68,50 @@ class Main{
         frame = new JFrame("Blackjack");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        contentPane = new JPanel();
+        contentPane = new JLabel(new ImageIcon("images/table.png")); //background image
+        contentPane.setLayout(new FlowLayout());
 
         buildTitleScreen();
         buildTable();
 
         contentPane.add(titleScreen);
         contentPane.add(gameScreen);
+        
         gameScreen.setVisible(false);
         frame.setContentPane(contentPane);
-
-        frame.setSize(1280, 720); //increased from 480p to 720p
+        frame.pack();
+        frame.setSize(1280, 800);
         frame.setVisible(true);
     }
 
-    //event handler for button clicks
+    //Action Listener
     class Click implements ActionListener{
         public void actionPerformed(ActionEvent event){
             //System.out.println(event.getActionCommand());
             switch(event.getActionCommand()){
                 case "start":
-                    for(Player p : players) {
-                        //p.getSeat().addCard(new Card(4, 2));
-                        //p.getSeat().addCard(new Card(4, 2));
-                        //p.getSeat().getDisplay();
-                        allSeats.add(p.getSeat().getDisplay());
-                      
+                    allSeats.add(players.get(0).getSeat().getDisplay());
+                    allSeats.add(dealer.getSeat().getDisplay());
+                    for(int i = 1; i < players.size(); i++){
+                        allSeats.add(players.get(i).getSeat().getDisplay());
                     }
+
+                    for(Player p : players){
+                        p.addCard(new Card(4, 2));
+                        p.addCard(new Card(4, 2));
+                    }
+                    dealer.addCard(new Card(4, 2));
+                    dealer.addCard(new Card(4, 2));
+
+
                     titleScreen.setVisible(false);
                     gameScreen.setVisible(true);
-                    
                     break;
 
                 case "hit":
                     //TODO: hit code
-                    players.get(0).getSeat().addCard(new Card(4, 2)); //testing
+                    //players.get(0).getSeat().addCard(new Card(4, 2)); //testing
+                    players.get(currentPlayerIndex).addCard(new Card(4, 2));
 
 
 
@@ -102,10 +120,18 @@ class Main{
 
                 case "stand":
                     //TODO: stand code
+                    players.get(currentPlayerIndex).getSeat().clearCards();
+                    gameScreen.revalidate();
                     break;
 
                 case "split":
-                    //TODO: split code
+                    //TODO: check if the player can split
+                    //players.get(currentPlayerIndex).split();
+                    for(Player p : players){
+                        p.split();
+                    }
+                    dealer.split();
+                    gameScreen.revalidate();
                     break;
                 
                 case "double":
@@ -190,9 +216,13 @@ class Main{
         buttonsPanel.add(hitButton);
 
         standButton = new JButton("Stand");
+        standButton.setActionCommand("stand");
+        standButton.addActionListener(new Click());
         buttonsPanel.add(standButton);
 
         splitButton = new JButton("Split");
+        splitButton.setActionCommand("split");
+        splitButton.addActionListener(new Click());
         buttonsPanel.add(splitButton);
         
         doubleButton = new JButton("Double Down");

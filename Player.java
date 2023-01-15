@@ -7,14 +7,17 @@ public class Player {
     private int chipsAmount;
     private int betAmount;
     private String name;
+
+    private ArrayList<Card> hand;
+    private ArrayList<Card> splitHand;
     
     /**
      * Constructs an empty {@code Player} object.
      * <p>
-     * Creates a {@code Player} object without assigning anything. When the dealer is
-     * creates, this constructor is used
+     * Creates a {@code Player} object without assigning anything.
      * 
      * @see #Player(int, String)
+     * @apiNote unused, why is this here?
      */
     public Player() {}
     
@@ -27,10 +30,55 @@ public class Player {
     public Player(int amount, String name) {
         chipsAmount = amount;
         this.name = name;
+
+        hand = new ArrayList<Card>();
+        splitHand = new ArrayList<Card>();
         seat = new Seat(this.name);
         seat.updateChips(chipsAmount);
     }
     
+    /**
+     * Adds a given {@link Card} object to the player's hand
+     * @param newCard -- {@code Card} the card to add
+     */
+    public void addCard(Card newCard){
+        hand.add(newCard);
+        seat.addCard(newCard);
+    }
+    
+    /**
+     * Adds a given {@link Card} object to the player's second hand if they split
+     * @param newCard -- {@code Card} the card to add
+     * @see #split()
+     */
+    public void addCardSplit(Card newCard){
+        splitHand.add(newCard);
+        seat.addSplit(newCard);
+    }
+
+    /**
+     * Splits the player's hand into two hands
+     * <p>
+     * The second card in {@link #hand} is added to {@link #splitHand} and removed from itself.
+     */
+    public void split(){
+        splitHand.add(hand.get(1));
+        hand.remove(1);
+        
+        seat.clearCards();
+        seat.addCard(hand.get(0));
+        seat.addSplit(hand.get(0));
+    }
+    
+    /**
+     * Clears the player's {@link #hand} and {@link #splitHand}
+     */
+    public void resetHands(){
+        hand = new ArrayList<Card>();
+        splitHand = new ArrayList<Card>();
+    }
+
+   // SECTION getters
     /**
      * Returns the amount of chips the player has
      * @return {@code int} the amount of chips the player has
@@ -38,9 +86,6 @@ public class Player {
     public int getChipsAmount() {
         return chipsAmount;
     }
-
-   // SECTION getters
-   
 
     /**
      * Returns the amount the player has bet total
