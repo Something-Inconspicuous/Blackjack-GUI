@@ -8,6 +8,8 @@ public class Player {
     private int betAmount;
     private String name;
 
+    public boolean isPlaying;
+
     private ArrayList<Card> hand;
     private ArrayList<Card> splitHand;
     

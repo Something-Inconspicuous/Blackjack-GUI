@@ -13,8 +13,8 @@ class Main{
     // TODO: make multiplayer
     //TODO: betting
     // BACKEND
-    private static final int MAXPlAYERCOUNT = 8;
-    private static final int defaultChips = 100;
+    public static final int MAX_PlAYER_COUNT = 8;
+    public static final int DEFAULT_CHIPS = 100;
 
     /**
      * Will store the index in {@link #players} that corrosponds to the current player to take their turn is
@@ -40,24 +40,17 @@ class Main{
     JPanel titleScreen;
     JLabel titleLabel;
     JButton startButton;
-    //JLabel titleImage; //potential for an image on the title screen, idk
 
     //Main game components
     JPanel gameScreen;
 
-    //ArrayList<Image> cardImages;
-    //ArrayList<ArrayList<Image>> allCardImages; //it looks really dumb, but it works in theory, so lets go with it
-
     JPanel allSeats;
-    //JPanel[] seats; //each seat will will be a panel that display the player with the same index's stuff
-    //JPanel dealerSeat; //the dealer's seat will be seperate
-
-    //JPanel playerSeats; //will display the player's panels
 
     JPanel bottomPanel; //will display all of the info stuff
     JPanel infoPanel; //will display who's turn it is and the buttons to play the game
     JLabel infoLabel; //will display who's turn it is
     JPanel buttonsPanel; //will hold the buttons
+    JButton submitBets; //used to submit player's bets-
 
     JButton hitButton;
     JButton standButton;
@@ -80,7 +73,7 @@ class Main{
         gameScreen.setVisible(false);
         frame.setContentPane(contentPane);
         frame.pack();
-        frame.setSize(1280, 800);
+        frame.setSize(1240, 860);
         frame.setVisible(true);
     }
 
@@ -99,6 +92,7 @@ class Main{
                     for(Player p : players){
                         p.addCard(new Card(4, 2));
                         p.addCard(new Card(4, 2));
+                        p.getSeat().setBetting(true);
                     }
                     dealer.addCard(new Card(4, 2));
                     dealer.addCard(new Card(4, 2));
@@ -136,6 +130,23 @@ class Main{
                 
                 case "double":
                     //TODO: double down code
+                    break;
+                
+                case "submit":
+                    for (Player p : players) {
+                        int pBet = p.getSeat().getBetInput();
+                        if(pBet <= 0){
+                            p.isPlaying = false;
+                        } else if(pBet > p.getChipsAmount()){
+                            pBet = p.getChipsAmount();
+                        }
+                        p.setBet(pBet);
+
+                        p.getSeat().setBetting(false);
+                    }
+                    submitBets.setVisible(false);
+
+                    //TODO: player turns
             }
         }
     }
@@ -146,8 +157,8 @@ class Main{
     }
   
     public static void main(String[] args) {
-        for (int i = 0; i < MAXPlAYERCOUNT; i++) {
-            players.add(new Player(defaultChips, "Player " + (i + 1)));
+        for (int i = 0; i < MAX_PlAYER_COUNT; i++) {
+            players.add(new Player(MAX_PlAYER_COUNT, "Player " + (i + 1)));
 
         }
         
@@ -195,15 +206,6 @@ class Main{
 
         allSeats = new JPanel();
         allSeats.setLayout(new GridLayout(3, 3, 5, 5));
-        //allSeats.setBounds(1, 1, 1, 1);
-
-        //seats = new JPanel[MAXPlAYERCOUNT];
-        //for(int i = 0; i < MAXPlAYERCOUNT; i++){
-            //seats[i] = new JPanel(); 
-            //seat.setLayout(null); //TODO: reminder: change the layout to work better
-        //}
-
-        //dealerSeat = new JPanel();
 
         infoPanel = new JPanel();
         infoLabel = new JLabel(players.get(0).getName() + " with " + players.get(0).getBetAmount()); //change to hand value
@@ -227,14 +229,13 @@ class Main{
         
         doubleButton = new JButton("Double Down");
         buttonsPanel.add(doubleButton);
+
+        submitBets = new JButton("Submit All Bets");
+        submitBets.setActionCommand("submit");
+        submitBets.addActionListener(new Click());
         
         infoPanel.add(infoLabel);
-
-        //allSeats.add(seats[0]);
-        //allSeats.add(dealerSeat);
-        //for(int i = 1; i < seats.length; i++){
-            //allSeats.add(seats[i]);
-        //}
+        infoPanel.add(submitBets);
 
         bottomPanel.add(infoPanel);
         bottomPanel.add(buttonsPanel);
@@ -242,4 +243,5 @@ class Main{
         gameScreen.add(allSeats);
         gameScreen.add(bottomPanel);
     }
+    //!SECTION
 }

@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -14,6 +15,7 @@ public class Seat {
     private JPanel mainPane;
 
     private JPanel playerInfoPanel;
+    private JTextField betInput;
     private JLabel nameLabel;
     private JLabel chipsLabel;
     private JLabel betLabel;
@@ -38,11 +40,28 @@ public class Seat {
         playerInfoPanel = new JPanel();
         playerInfoPanel.setLayout(new GridLayout(2, 2, 0, 0));
         nameLabel = new JLabel("Name: " + name);
+
+
+        betInput = new JTextField(10);
+        betInput.setVisible(false);
+        //this piece of code was found at https://www.tutorialspoint.com/how-can-we-make-jtextfield-accept-only-numbers-in-java and modified by me
+        betInput.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent ke) {
+               if (ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9' || ke.getKeyCode() == KeyEvent.VK_BACK_SPACE){
+                  betInput.setEditable(true);
+               } else {
+                  betInput.setEditable(false);
+               }
+            }
+         });
+        
+        
         chipsLabel = new JLabel("Chips: ");
         betLabel = new JLabel("Bet: ");
 
         playerInfoPanel.add(nameLabel);
-        playerInfoPanel.add(new JLabel()); //add an empty label to have the name on the topo and the chips info on bottom
+        playerInfoPanel.add(betInput);
+        //betInput.setVisible(false);
         playerInfoPanel.add(chipsLabel);
         playerInfoPanel.add(betLabel);
 
@@ -121,6 +140,31 @@ public class Seat {
         splitCards = new ArrayList<JLabel>();
     }
 
+    /**
+     * Sets whether a seat can bet
+     * @param b -- {@code boolean} what to set the visibility og the input to
+     */
+    public void setBetting(boolean b){
+        betInput.setVisible(b);
+    }
+
+    /**
+     * Gets the number inputted for the bet
+     * @return {@code int} the number in the bet input, or -1 if nothin is in the input
+     * @throws ArithmeticException the text in {@link #betInput} is unable to be parsed into an {@code int}
+     */
+    public int getBetInput(){
+        String bet = betInput.getText();
+        if(bet.equals("")){
+            return -1;
+        }
+        return Integer.parseInt(bet);
+    }
+
+    /**
+     * returns the display of the seat as a {@link JPanel}
+     * @return {@code JPanel} the GUI components all formatted together in one panel
+     */
     public JPanel getDisplay(){
         return mainPane;
     }
