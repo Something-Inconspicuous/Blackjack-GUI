@@ -1,15 +1,35 @@
 /**
  * The {@code Card} class represents a single card per instance.
  * <p>
- * Each card stores its own suit and face as integers.
- * These are stored privately, so use the below methods to access them.
+ * Each card stores its own suit and face as integers. The cards are displayed as the 
+ * <a href="https://en.wikipedia.org/wiki/French-suited_playing_cards">French Suited</a>,
+ * <a href="https://en.wikipedia.org/wiki/Standard_52-card_deck">Standerd 52-card deck</a>
+ * using the 
+ * <a href=https://en.wikipedia.org/wiki/French-suited_playing_cards#English_pattern>English Pattern</a>.
+ * 
  * 
  * @see #getFace()
  * @see #getSuit()
+ * @see Deck
+ * @see https://en.wikipedia.org/wiki/Playing_card
+ * @apiNote {@link #suit} and {@link #face} are {@code private}. Use their respective get methods to access them
  */
 public class Card {
 
-    private int suit, face;
+    /**
+     * The suit of the card as in {@code int} as follows
+     * <ol>
+     *   <li>Spades</li>
+     *   <li>Hearts</li>
+     *   <li>Diamonds</li>
+     *   <li>Clubs</li>
+     * </ol> 
+     */
+    private int suit;
+    /** 
+     * The face of the card as an {@code int}
+     */
+    private int face;
     
     /**
      * Empty constructor, sets nothing
@@ -33,10 +53,10 @@ public class Card {
      * 
      * The suit is stored as in integer as follows
      * <ol>
-     *   <li>Clubs</li>
-     *   <li>Diamonds</li>
-     *   <li>Hearts</li>
      *   <li>Spades</li>
+     *   <li>Hearts</li>
+     *   <li>Diamonds</li>
+     *   <li>Clubs</li>
      * </ol> 
      * 
      * @return {@code int} the suit of the card as above
@@ -65,6 +85,7 @@ public class Card {
         //add switch case that sets output to the face of the card
         switch(this.getFace()) {
             case 1:
+            case 14:
                 output = "Ace";
                 break;  
             case 11:
@@ -104,10 +125,9 @@ public class Card {
      * @return {@code String} the imageurl of the image of the card
      */
     public String toImageLink(){
-        //TODO: add images
         String link = this.toString();
 
-        link = "image/" + link.toLowerCase().replaceAll(" ", "") + ".png";
+        link = "images/" + link.toLowerCase().replaceAll(" ", "") + ".png";
         //all of the card images follow the pattern of "faceofsuit.png"
 
         return link;

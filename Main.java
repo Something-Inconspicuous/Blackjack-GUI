@@ -4,21 +4,27 @@
  */
 
 import javax.swing.*;
-
-//import javafx.geometry.Insets; //invalid import appearently
-
 import java.awt.event.*;
 import java.awt.*;
 
 import java.util.ArrayList;
-import java.util.zip.InflaterOutputStream;
 
 class Main{
+    // TODO: make multiplayer
+    //TODO: betting
     // BACKEND
-    private static final int MAXPlAYERCOUNT = 7;
+    public static final int MAX_PlAYER_COUNT = 8;
+    public static final int DEFAULT_CHIPS = 100;
+
+    /**
+     * Will store the index in {@link #players} that corrosponds to the current player to take their turn is
+     */
+    private int current = 0;
 
     private static ArrayList<Player> players = new ArrayList<Player>();
-    private static final int defaultChips = 100;
+    private static Player dealer = new Player(0, "Dealer");
+    private static Deck deck = new Deck();
+    
 
     // TODO: design and create front end
     // FRONTEND
@@ -27,31 +33,24 @@ class Main{
     GridBagConstraints gbc = new GridBagConstraints();
 
     JFrame frame;
-    JPanel contentPane;
+    JLabel contentPane;
     
 
     //Start menu components
     JPanel titleScreen;
     JLabel titleLabel;
     JButton startButton;
-    //JLabel titleImage; //potential for an image on the title screen, idk
 
     //Main game components
     JPanel gameScreen;
 
-    //ArrayList<Image> cardImages;
-    //ArrayList<ArrayList<Image>> allCardImages; //it looks really dumb, but it works in theory, so lets go with it
-
     JPanel allSeats;
-    //JPanel[] seats; //each seat will will be a panel that display the player with the same index's stuff
-    //JPanel dealerSeat; //the dealer's seat will be seperate
-
-    //JPanel playerSeats; //will display the player's panels
 
     JPanel bottomPanel; //will display all of the info stuff
     JPanel infoPanel; //will display who's turn it is and the buttons to play the game
     JLabel infoLabel; //will display who's turn it is
     JPanel buttonsPanel; //will hold the buttons
+    JButton submitBets; //used to submit player's bets-
 
     JButton hitButton;
     JButton standButton;
@@ -62,44 +61,147 @@ class Main{
         frame = new JFrame("Blackjack");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        contentPane = new JPanel();
+        contentPane = new JLabel(new ImageIcon("images/table.png")); //background image
+        contentPane.setLayout(new FlowLayout());
 
         buildTitleScreen();
         buildTable();
 
         contentPane.add(titleScreen);
         contentPane.add(gameScreen);
+        
         gameScreen.setVisible(false);
         frame.setContentPane(contentPane);
-
-        frame.setSize(640, 480); //idk, thought 480p was a good resolution
+        frame.pack();
+        frame.setSize(1240, 860);
         frame.setVisible(true);
     }
 
-    //event handler for button clicks
+    //Action Listener
     class Click implements ActionListener{
         public void actionPerformed(ActionEvent event){
+            //System.out.println(event.getActionCommand());
+            Player player = players.get(current);
             switch(event.getActionCommand()){
                 case "start":
+                    allSeats.add(players.get(0).getSeat().getDisplay());
+                    allSeats.add(dealer.getSeat().getDisplay());
+                    for(int i = 1; i < players.size(); i++){
+                        allSeats.add(players.get(i).getSeat().getDisplay());
+                    }
+                    
+                    betting();
+
+                    
+
+                    
+
                     titleScreen.setVisible(false);
                     gameScreen.setVisible(true);
-                    
                     break;
 
                 case "hit":
                     //TODO: hit code
+                    
+
+
+                    if(!player.isStood && !player.isBust){
+                       player.addCard(new Card(4, 2)); //testing
+                    } else if(player.splitHandIsPlaying){
+                        player.addCardSplit(new Card(4, 2));
+                    }
+
+                    //TODO: add check for bust
+                    int score = player.getScore();
+                    if(score > 21){
+                        player.isBust = true;
+                    } else if(score == 21){
+                        player.isStood = true;
+                    }
+
+
+                    if(!player.isBust && !player.isStood){
+                        //the player can still play
+                        infoLabel.setText(player.getName() + "'s turn with " + player.getScore());
+                    } else if(!player.splitHandIsBust && !player.splitHandIsStood && player.splitHandIsPlaying){
+                        infoLabel.setText(player.getName() + "'s split hand with " + player.getScore());
+                    } else{
+                        endCurrentTurn();
+                    }
+
+                    gameScreen.revalidate();
                     break;
 
                 case "stand":
                     //TODO: stand code
+                    //player.getSeat().clearCards(); //testing
+                    if(player.isStood || player.isBust && player.splitHandIsPlaying){
+                        player.splitHandIsStood = true;
+                        endCurrentTurn();
+                    } else{
+                        player.isStood = true;
+                        endCurrentTurn();
+                    }
+
+                    
+                    gameScreen.revalidate();
                     break;
 
                 case "split":
-                    //TODO: split code
+                    //TODO: check if the player can split
+                    //players.get(currentPlayerIndex).split();
+                    //for(Player p : players){
+                        //p.split();
+                    //}
+                    player.split();
+                    //dealer.split();
+                    gameScreen.revalidate();
                     break;
                 
                 case "double":
                     //TODO: double down code
+                    break;
+                
+                case "submit":
+                    for (Player p : players) {
+                        int pBet = p.getSeat().getBetInput();
+                        if(pBet <= 0){
+                            p.isPlaying = false;
+                        } else if(pBet > p.getChipsAmount()){
+                            pBet = p.getChipsAmount();
+                        }
+                        p.setBet(pBet);
+
+                        p.getSeat().setBetting(false);
+                    }
+                    submitBets.setVisible(false);
+
+                    deck = new Deck();
+                    deck.shuffle();
+                    for (Player p : players) {
+                        if(p.isPlaying){
+                            p.addCard(new Card(4, 2));
+                            p.addCard(new Card(4, 2)); 
+                        }
+                    }
+                    dealer.addCard(new Card(4, 2));
+                    dealer.addCard(new Card(4, 2));
+
+                    current = -1;
+                    for (Player p : players) {
+                        //find the first playing player
+                        if(p.isPlaying){
+                            current = players.indexOf(p);
+                            break;
+                        }
+                    }
+                    if(current != -1){
+                        infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
+                    }
+                    
+                    
+
+                    //TODO: player turns
             }
         }
     }
@@ -110,15 +212,11 @@ class Main{
     }
   
     public static void main(String[] args) {
-        int playerNum = 2;
-        for (int i = 0; i < playerNum; i++) {
-            players.add(new Player(defaultChips, "Player " + (i + 1)));
+        for (int i = 0; i < MAX_PlAYER_COUNT; i++) {
+            players.add(new Player(DEFAULT_CHIPS, "Player " + (i + 1)));
 
         }
-        for(Player p : players) {
-        System.out.println(p.getName());
-        System.out.println(p.getChipsAmount());
-        }
+
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 runGUI();
@@ -161,45 +259,64 @@ class Main{
 
         allSeats = new JPanel();
         allSeats.setLayout(new GridLayout(3, 3, 5, 5));
-        //allSeats.setBounds(1, 1, 1, 1);
-
-        //seats = new JPanel[MAXPlAYERCOUNT];
-        //for(int i = 0; i < MAXPlAYERCOUNT; i++){
-            //seats[i] = new JPanel(); 
-            //seat.setLayout(null); //TODO: reminder: change the layout to work better
-        //}
-
-        //dealerSeat = new JPanel();
 
         infoPanel = new JPanel();
-        infoLabel = new JLabel("Placeholder");
+        infoLabel = new JLabel(players.get(0).getName() + " with " + players.get(0).getBetAmount()); //change to hand value
 
         buttonsPanel = new JPanel();
 
         hitButton = new JButton("Hit");
+        hitButton.setActionCommand("hit");
+        hitButton.addActionListener(new Click());
         buttonsPanel.add(hitButton);
 
         standButton = new JButton("Stand");
+        standButton.setActionCommand("stand");
+        standButton.addActionListener(new Click());
         buttonsPanel.add(standButton);
 
         splitButton = new JButton("Split");
+        splitButton.setActionCommand("split");
+        splitButton.addActionListener(new Click());
         buttonsPanel.add(splitButton);
         
         doubleButton = new JButton("Double Down");
         buttonsPanel.add(doubleButton);
+
+        submitBets = new JButton("Submit All Bets");
+        submitBets.setActionCommand("submit");
+        submitBets.addActionListener(new Click());
         
         infoPanel.add(infoLabel);
-
-        //allSeats.add(seats[0]);
-        //allSeats.add(dealerSeat);
-        //for(int i = 1; i < seats.length; i++){
-            //allSeats.add(seats[i]);
-        //}
+        infoPanel.add(submitBets);
 
         bottomPanel.add(infoPanel);
         bottomPanel.add(buttonsPanel);
 
         gameScreen.add(allSeats);
         gameScreen.add(bottomPanel);
+    }
+    //!SECTION
+
+    private void betting(){
+        infoLabel.setText("Everyone, place your bets");
+        submitBets.setVisible(true);
+        for(Player p : players){
+            p.getSeat().setBetting(true);
+        }
+    }
+
+    private void endCurrentTurn(){
+        if(current == MAX_PlAYER_COUNT - 1){
+            //the rounnd is over, move on to dealer's turn
+            //TODO: dealer's turn
+        } else{
+            //finds the next playing player
+            current++;
+            while(!players.get(current).isPlaying && current < MAX_PlAYER_COUNT){
+                current++;
+            }
+        }
+        infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
     }
 }
