@@ -16,7 +16,7 @@ public class Deck{
    */
   public Deck(){
     for(int i = 1; i <= 4; i++){
-      for(int j = 2; j <= 14; j++){ //comment this to store an ace as a 14
+      for(int j = 2; j <= 14; j++){ //uncomment this to store an ace as a 14
       //for(int j = 1; j <= 13; j++){ //uncomment this to store an ace as a 1
         Card tempCard = new Card(i, j);
         cards.add(tempCard);

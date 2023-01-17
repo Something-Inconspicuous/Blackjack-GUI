@@ -85,6 +85,7 @@ public class Card {
         //add switch case that sets output to the face of the card
         switch(this.getFace()) {
             case 1:
+            case 14:
                 output = "Ace";
                 break;  
             case 11:

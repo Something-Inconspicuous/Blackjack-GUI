@@ -9,6 +9,9 @@ public class Player {
     private String name;
 
     public boolean isPlaying;
+    public boolean isStood, isBust;
+    public boolean splitHandIsPlaying;
+    public boolean splitHandIsBust, splitHandIsStood;
 
     private ArrayList<Card> hand;
     private ArrayList<Card> splitHand;
@@ -37,6 +40,8 @@ public class Player {
         splitHand = new ArrayList<Card>();
         seat = new Seat(this.name);
         seat.updateChips(chipsAmount);
+
+        isPlaying = true;
     }
     
     /**
@@ -70,6 +75,8 @@ public class Player {
         seat.clearCards();
         seat.addCard(hand.get(0));
         seat.addSplit(hand.get(0));
+
+        splitHandIsPlaying = true;
     }
     
     /**
@@ -78,6 +85,16 @@ public class Player {
     public void resetHands(){
         hand = new ArrayList<Card>();
         splitHand = new ArrayList<Card>();
+    }
+
+    public void reset(){
+        this.resetHands();
+        isBust = false;
+        isStood = false;
+        isPlaying = true;
+        splitHandIsBust = false;
+        splitHandIsPlaying = false;
+        splitHandIsStood = false;
     }
 
    // SECTION getters
@@ -110,6 +127,51 @@ public class Player {
     public Seat getSeat(){
         return seat;
     }
+
+    /**
+     * Returns the score of the player's main hand
+     * @return {@code int} the score of the player's main hand
+     * @see #calcValue(ArrayList)
+     */
+    public int getScore(){
+        return calcValue(hand);
+    }
+
+    /**
+     * Returns the score of the player's split hand
+     * @return {@code int} the score of the player's split hand
+     * @see #calcValue(ArrayList)
+     */
+    public int getSplitScore(){
+        return calcValue(splitHand);
+    }
+
+    /**
+     * calaculates the total value a given hand has
+     * @param h -- {@code ArrayList<Card>} the hand to calculate the score of
+     * @return {@code int} the value of the hand
+     * @see #getScore()
+     * @see #getSplitScore()
+     */
+    public static int calcValue(ArrayList<Card> h){
+        int totalValue = 0;
+        boolean hasAce = false;
+        for(Card card : h){
+            if(card.getFace() == 14 || card.getFace() == 1){
+                hasAce = true;
+                totalValue += 1;
+            } else if(card.getFace() >= 10){
+                totalValue += 10;
+            } else{
+                totalValue += card.getFace();
+            }
+        }
+        if(hasAce && totalValue <= 11){
+            totalValue += 10;
+        }
+
+        return totalValue;
+    }
    // !SECTION
    
    // SECTION setters
@@ -119,11 +181,8 @@ public class Player {
      */
     public void setBet(int amount) {
         betAmount =  amount;
+        seat.updateBet(betAmount);
     }
 
    // !SECTION
-
-   public void updateSeat(){
-    
-   }
 }

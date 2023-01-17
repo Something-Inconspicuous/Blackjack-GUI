@@ -19,7 +19,7 @@ class Main{
     /**
      * Will store the index in {@link #players} that corrosponds to the current player to take their turn is
      */
-    private static int currentPlayerIndex = 0;
+    private int current = 0;
 
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static Player dealer = new Player(0, "Dealer");
@@ -81,6 +81,7 @@ class Main{
     class Click implements ActionListener{
         public void actionPerformed(ActionEvent event){
             //System.out.println(event.getActionCommand());
+            Player player = players.get(current);
             switch(event.getActionCommand()){
                 case "start":
                     allSeats.add(players.get(0).getSeat().getDisplay());
@@ -88,15 +89,12 @@ class Main{
                     for(int i = 1; i < players.size(); i++){
                         allSeats.add(players.get(i).getSeat().getDisplay());
                     }
+                    
+                    betting();
 
-                    for(Player p : players){
-                        p.addCard(new Card(4, 2));
-                        p.addCard(new Card(4, 2));
-                        p.getSeat().setBetting(true);
-                    }
-                    dealer.addCard(new Card(4, 2));
-                    dealer.addCard(new Card(4, 2));
+                    
 
+                    
 
                     titleScreen.setVisible(false);
                     gameScreen.setVisible(true);
@@ -104,27 +102,59 @@ class Main{
 
                 case "hit":
                     //TODO: hit code
-                    //players.get(0).getSeat().addCard(new Card(4, 2)); //testing
-                    players.get(currentPlayerIndex).addCard(new Card(4, 2));
+                    
 
 
+                    if(!player.isStood && !player.isBust){
+                       player.addCard(new Card(4, 2)); //testing
+                    } else if(player.splitHandIsPlaying){
+                        player.addCardSplit(new Card(4, 2));
+                    }
+
+                    //TODO: add check for bust
+                    int score = player.getScore();
+                    if(score > 21){
+                        player.isBust = true;
+                    } else if(score == 21){
+                        player.isStood = true;
+                    }
+
+
+                    if(!player.isBust && !player.isStood){
+                        //the player can still play
+                        infoLabel.setText(player.getName() + "'s turn with " + player.getScore());
+                    } else if(!player.splitHandIsBust && !player.splitHandIsStood && player.splitHandIsPlaying){
+                        infoLabel.setText(player.getName() + "'s split hand with " + player.getScore());
+                    } else{
+                        endCurrentTurn();
+                    }
 
                     gameScreen.revalidate();
                     break;
 
                 case "stand":
                     //TODO: stand code
-                    players.get(currentPlayerIndex).getSeat().clearCards();
+                    //player.getSeat().clearCards(); //testing
+                    if(player.isStood || player.isBust && player.splitHandIsPlaying){
+                        player.splitHandIsStood = true;
+                        endCurrentTurn();
+                    } else{
+                        player.isStood = true;
+                        endCurrentTurn();
+                    }
+
+                    
                     gameScreen.revalidate();
                     break;
 
                 case "split":
                     //TODO: check if the player can split
                     //players.get(currentPlayerIndex).split();
-                    for(Player p : players){
-                        p.split();
-                    }
-                    dealer.split();
+                    //for(Player p : players){
+                        //p.split();
+                    //}
+                    player.split();
+                    //dealer.split();
                     gameScreen.revalidate();
                     break;
                 
@@ -146,6 +176,31 @@ class Main{
                     }
                     submitBets.setVisible(false);
 
+                    deck = new Deck();
+                    deck.shuffle();
+                    for (Player p : players) {
+                        if(p.isPlaying){
+                            p.addCard(new Card(4, 2));
+                            p.addCard(new Card(4, 2)); 
+                        }
+                    }
+                    dealer.addCard(new Card(4, 2));
+                    dealer.addCard(new Card(4, 2));
+
+                    current = -1;
+                    for (Player p : players) {
+                        //find the first playing player
+                        if(p.isPlaying){
+                            current = players.indexOf(p);
+                            break;
+                        }
+                    }
+                    if(current != -1){
+                        infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
+                    }
+                    
+                    
+
                     //TODO: player turns
             }
         }
@@ -158,11 +213,9 @@ class Main{
   
     public static void main(String[] args) {
         for (int i = 0; i < MAX_PlAYER_COUNT; i++) {
-            players.add(new Player(MAX_PlAYER_COUNT, "Player " + (i + 1)));
+            players.add(new Player(DEFAULT_CHIPS, "Player " + (i + 1)));
 
         }
-        
-
 
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -244,4 +297,26 @@ class Main{
         gameScreen.add(bottomPanel);
     }
     //!SECTION
+
+    private void betting(){
+        infoLabel.setText("Everyone, place your bets");
+        submitBets.setVisible(true);
+        for(Player p : players){
+            p.getSeat().setBetting(true);
+        }
+    }
+
+    private void endCurrentTurn(){
+        if(current == MAX_PlAYER_COUNT - 1){
+            //the rounnd is over, move on to dealer's turn
+            //TODO: dealer's turn
+        } else{
+            //finds the next playing player
+            current++;
+            while(!players.get(current).isPlaying && current < MAX_PlAYER_COUNT){
+                current++;
+            }
+        }
+        infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
+    }
 }
