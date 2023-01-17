@@ -28,7 +28,7 @@ class Main{
 
     // TODO: design and create front end
     // FRONTEND
-    //GridBagLayout is confusing, but it's fine
+    // GridBagLayout is confusing, but it's fine
     GridBagLayout layout = new GridBagLayout();
     GridBagConstraints gbc = new GridBagConstraints();
 
