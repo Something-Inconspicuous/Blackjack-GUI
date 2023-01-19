@@ -50,7 +50,8 @@ class Main{
     JPanel infoPanel; //will display who's turn it is and the buttons to play the game
     JLabel infoLabel; //will display who's turn it is
     JPanel buttonsPanel; //will hold the buttons
-    JButton submitBets; //used to submit player's bets-
+    JButton submitBets; //used to submit player's bets
+    JButton payoutBets;
 
     JButton hitButton;
     JButton standButton;
@@ -107,8 +108,10 @@ class Main{
 
                     if(!player.isStood && !player.isBust){
                        player.addCard(new Card(4, 2)); //testing
+                       infoLabel.setText(player.getName() + "'s turn with " + player.getScore());
                     } else if(player.splitHandIsPlaying){
                         player.addCardSplit(new Card(4, 2));
+                        infoLabel.setText(player.getName() + "'s split hand with " + player.getScore());
                     }
 
                     //TODO: add check for bust
@@ -140,7 +143,10 @@ class Main{
                         endCurrentTurn();
                     } else{
                         player.isStood = true;
-                        endCurrentTurn();
+                        if(!player.splitHandIsPlaying){
+                            endCurrentTurn();
+                        }
+                        
                     }
 
                     
@@ -149,20 +155,30 @@ class Main{
 
                 case "split":
                     //TODO: check if the player can split
-                    //players.get(currentPlayerIndex).split();
-                    //for(Player p : players){
-                        //p.split();
-                    //}
-                    player.split();
+                    if(player.getHand().size() == 2){
+                        if(player.getHand().get(0).getFace() == player.getHand().get(1).getFace()
+                        && !player.splitHandIsPlaying){
+                            player.split();
+                            player.addCard(new Card(4, 2));
+                            player.addCardSplit(new Card(4, 2));
+                        }
+                    }
+                    
                     //dealer.split();
                     gameScreen.revalidate();
                     break;
                 
                 case "double":
                     //TODO: double down code
+                    dealerTurn();
                     break;
                 
                 case "submit":
+                    hitButton.setVisible(true);
+                    standButton.setVisible(true);
+                    splitButton.setVisible(true);
+                    doubleButton.setVisible(true);
+
                     for (Player p : players) {
                         int pBet = p.getSeat().getBetInput();
                         if(pBet <= 0){
@@ -170,7 +186,9 @@ class Main{
                         } else if(pBet > p.getChipsAmount()){
                             pBet = p.getChipsAmount();
                         }
-                        p.setBet(pBet);
+                        if(p.isPlaying){
+                            p.setBet(pBet);
+                        }
 
                         p.getSeat().setBetting(false);
                     }
@@ -198,10 +216,12 @@ class Main{
                     if(current != -1){
                         infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
                     }
-                    
-                    
+                    break;
 
-                    //TODO: player turns
+                case "payout":
+                    //TODO: payout bets
+                    payoutBets.setVisible(false);
+                    betting();
             }
         }
     }
@@ -281,11 +301,18 @@ class Main{
         buttonsPanel.add(splitButton);
         
         doubleButton = new JButton("Double Down");
+        doubleButton.setActionCommand("double");
+        doubleButton.addActionListener(new Click());
         buttonsPanel.add(doubleButton);
 
         submitBets = new JButton("Submit All Bets");
         submitBets.setActionCommand("submit");
         submitBets.addActionListener(new Click());
+
+        payoutBets = new JButton("Payout Bets");
+        payoutBets.setActionCommand("payout");
+        payoutBets.addActionListener(new Click());
+        payoutBets.setVisible(false);
         
         infoPanel.add(infoLabel);
         infoPanel.add(submitBets);
@@ -299,6 +326,11 @@ class Main{
     //!SECTION
 
     private void betting(){
+        hitButton.setVisible(false);
+        standButton.setVisible(false);
+        splitButton.setVisible(false);
+        doubleButton.setVisible(false);
+
         infoLabel.setText("Everyone, place your bets");
         submitBets.setVisible(true);
         for(Player p : players){
@@ -309,7 +341,7 @@ class Main{
     private void endCurrentTurn(){
         if(current == MAX_PlAYER_COUNT - 1){
             //the rounnd is over, move on to dealer's turn
-            //TODO: dealer's turn
+            dealerTurn();
         } else{
             //finds the next playing player
             current++;
@@ -318,5 +350,19 @@ class Main{
             }
         }
         infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
+    }
+
+    private void dealerTurn(){
+        while(dealer.getScore() < 17){
+            dealer.addCard(new Card(4, 2));
+            //gameScreen.revalidate();
+        }
+        
+        if(dealer.getScore() > 21){
+            infoLabel.setText("Dealer busts with " + dealer.getScore());
+        } else{
+            infoLabel.setText("Dealer stands with " + dealer.getScore());
+        }
+        payoutBets.setVisible(true);
     }
 }
