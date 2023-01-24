@@ -172,6 +172,10 @@ public class Player {
 
         return totalValue;
     }
+
+    public ArrayList<Card> getHand(){
+        return hand;
+    }
    // !SECTION
    
    // SECTION setters
