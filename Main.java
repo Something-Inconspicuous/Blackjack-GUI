@@ -222,6 +222,25 @@ class Main{
                     //TODO: payout bets
                     payoutBets.setVisible(false);
                     betting();
+                    
+                    for (Player p : players) {
+                       int value = p.getScore();
+                       int dealerValue = dealer.getScore();
+                       if((p.getHand().size() == 2) && (value == 21)) {
+                            p.setChipsAmount(p.getChipsAmount() + ((int)(p.getBetAmount() * 1.5))); 
+                       } else if(p.isBust) {
+                            p.setChipsAmount(p.getChipsAmount() - p.getBetAmount());
+                       } else if(dealer.isBust) {
+                            p.setChipsAmount(p.getChipsAmount() + p.getBetAmount());
+                       } else if(value > dealerValue) {
+                            p.setChipsAmount(p.getBetAmount() + p.getScore());
+                       } else if (value < dealerValue) {
+                            p.setChipsAmount(p.getBetAmount() - p.getScore());
+                       }
+                    }
+
+
+                    gameScreen.revalidate();
             }
         }
     }

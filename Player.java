@@ -179,12 +179,16 @@ public class Player {
    // !SECTION
    
    // SECTION setters
+   public void setChipsAmount(int amount) {
+        this.chipsAmount = amount;
+   } 
+
     /**
      * Sets the amount of chips the player is betting to {@code amount}
      * @param amount -- the amount to bet
      */
     public void setBet(int amount) {
-        betAmount =  amount;
+        betAmount = amount;
         seat.updateBet(betAmount);
     }
 
