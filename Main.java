@@ -161,6 +161,7 @@ class Main{
                             player.split();
                             player.addCard(new Card(4, 2));
                             player.addCardSplit(new Card(4, 2));
+                            player.splitHandIsPlaying = true;
                         }
                     }
                     
@@ -169,8 +170,14 @@ class Main{
                     break;
                 
                 case "double":
-                    //TODO: double down code
-                    dealerTurn();
+                    int s = player.getScore();
+                    if(s >= 9 && s <= 11 && player.getHand().size() == 2){
+                        player.addCard(new Card(4, 2));
+                        player.isStood = true;
+                    }
+                    //dealerTurn();
+
+                    gameScreen.revalidate();
                     break;
                 
                 case "submit":
@@ -216,6 +223,7 @@ class Main{
                     if(current != -1){
                         infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
                     }
+                    gameScreen.revalidate();
                     break;
 
                 case "payout":
