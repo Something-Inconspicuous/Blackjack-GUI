@@ -61,7 +61,7 @@ class Main{
         frame = new JFrame("Blackjack");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        contentPane = new JLabel(new ImageIcon("images/table.png")); //background image
+        contentPane = new JLabel(new ImageIcon("images/betterTable.png")); //background image
         contentPane.setLayout(new FlowLayout());
 
         buildTitleScreen();
