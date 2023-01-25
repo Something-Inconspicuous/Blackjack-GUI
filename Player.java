@@ -97,6 +97,11 @@ public class Player {
         splitHandIsStood = false;
     }
 
+    public void updateSeat(){
+        seat.updateBet(betAmount);
+        seat.updateChips(chipsAmount);
+    }
+
    // SECTION getters
     /**
      * Returns the amount of chips the player has

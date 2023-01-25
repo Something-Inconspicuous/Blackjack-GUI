@@ -102,9 +102,6 @@ class Main{
                     break;
 
                 case "hit":
-                    //TODO: hit code
-                    
-
 
                     if(!player.isStood && !player.isBust){
                        player.addCard(new Card(4, 2)); //testing
@@ -114,7 +111,6 @@ class Main{
                         infoLabel.setText(player.getName() + "'s split hand with " + player.getScore());
                     }
 
-                    //TODO: add check for bust
                     int score = player.getScore();
                     if(score > 21){
                         player.isBust = true;
@@ -174,6 +170,7 @@ class Main{
                     if(s >= 9 && s <= 11 && player.getHand().size() == 2){
                         player.addCard(new Card(4, 2));
                         player.isStood = true;
+                        player.setBet(player.getBetAmount()*2);
                     }
                     //dealerTurn();
 
@@ -198,6 +195,7 @@ class Main{
                         }
 
                         p.getSeat().setBetting(false);
+                        p.updateSeat();
                     }
                     submitBets.setVisible(false);
 
@@ -243,7 +241,15 @@ class Main{
                             p.setChipsAmount(p.getBetAmount() + p.getScore());
                        } else if (value < dealerValue) {
                             p.setChipsAmount(p.getBetAmount() - p.getScore());
+                       } else{
+                        //the player and dealer have tied, so no bet is paid out
                        }
+                       //TODO: split payouts here
+
+                       //reset the player's bet to 0
+                       p.setBet(0);
+                       p.reset();
+                       p.updateSeat();
                     }
 
 
