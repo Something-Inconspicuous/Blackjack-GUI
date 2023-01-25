@@ -245,14 +245,28 @@ class Main{
                         //the player and dealer have tied, so no bet is paid out
                        }
                        //TODO: split payouts here
-
-                       //reset the player's bet to 0
+                       if(p.splitHandIsPlaying){
+                            int splitValue = p.getSplitScore();
+                            if((p.getHand().size() == 2) && (value == 21)) {
+                                    p.setChipsAmount(p.getChipsAmount() + ((int)(p.getBetAmount() * 1.5))); 
+                            } else if(p.isBust) {
+                                    p.setChipsAmount(p.getChipsAmount() - p.getBetAmount());
+                            } else if(dealer.isBust) {
+                                    p.setChipsAmount(p.getChipsAmount() + p.getBetAmount());
+                            } else if(splitValue > dealerValue) {
+                                    p.setChipsAmount(p.getBetAmount() + p.getScore());
+                            } else if (value < dealerValue) {
+                                    p.setChipsAmount(p.getBetAmount() - p.getScore());
+                            } else{
+                                //the player and dealer have tied, so no bet is paid out
+                            }
+                       }
                        p.setBet(0);
                        p.reset();
                        p.updateSeat();
+                       //reset the player's bet to 0
                     }
-
-
+                    betting();
                     gameScreen.revalidate();
             }
         }
