@@ -123,7 +123,7 @@ class Main{
                         //the player can still play
                         infoLabel.setText(player.getName() + "'s turn with " + player.getScore());
                     } else if(!player.splitHandIsBust && !player.splitHandIsStood && player.splitHandIsPlaying){
-                        infoLabel.setText(player.getName() + "'s split hand with " + player.getScore());
+                        infoLabel.setText(player.getName() + "'s split hand with " + player.getSplitScore());
                     } else{
                         endCurrentTurn();
                     }
@@ -141,6 +141,8 @@ class Main{
                         player.isStood = true;
                         if(!player.splitHandIsPlaying){
                             endCurrentTurn();
+                        } else{
+                            infoLabel.setText(player.getName() + "'s split hand with " + player.getSplitScore());
                         }
                         
                     }
@@ -150,7 +152,6 @@ class Main{
                     break;
 
                 case "split":
-                    //TODO: check if the player can split
                     if(player.getHand().size() == 2){
                         if(player.getHand().get(0).getFace() == player.getHand().get(1).getFace()
                         && !player.splitHandIsPlaying){
@@ -385,14 +386,18 @@ class Main{
     }
 
     private void endCurrentTurn(){
-        if(current == MAX_PlAYER_COUNT - 1){
+        current++;
+        if(current >= MAX_PlAYER_COUNT){
             //the rounnd is over, move on to dealer's turn
             dealerTurn();
         } else{
             //finds the next playing player
-            current++;
-            while(!players.get(current).isPlaying && current < MAX_PlAYER_COUNT){
+            
+            while(current < MAX_PlAYER_COUNT && !players.get(current).isPlaying){
                 current++;
+            }
+            if(current >= MAX_PlAYER_COUNT){
+                dealerTurn();
             }
         }
         infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
