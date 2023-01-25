@@ -227,7 +227,6 @@ class Main{
                     break;
 
                 case "payout":
-                    //TODO: payout bets
                     payoutBets.setVisible(false);
                     betting();
                     
