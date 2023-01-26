@@ -30,6 +30,8 @@ public class Card {
      * The face of the card as an {@code int}
      */
     private int face;
+
+    public static final String CARD_BACK_URL = "images/cardback.png";
     
     /**
      * Empty constructor, sets nothing

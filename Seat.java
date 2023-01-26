@@ -25,8 +25,10 @@ public class Seat {
     private JPanel splitPanel;
 
 
-    private ArrayList<JLabel> handCards;
-    private ArrayList<JLabel> splitCards;
+    private ArrayList<JLabel> handCardsLabels;
+    private ArrayList<JLabel> splitCardsLabels;
+    private ArrayList<Card> handCards;
+    private ArrayList<Card> splitCards;
     
 
     /**
@@ -44,7 +46,8 @@ public class Seat {
 
         betInput = new JTextField(10);
         betInput.setVisible(false);
-        //this piece of code was found at https://www.tutorialspoint.com/how-can-we-make-jtextfield-accept-only-numbers-in-java and modified by me
+        //this piece of code was found at 
+        //https://www.tutorialspoint.com/how-can-we-make-jtextfield-accept-only-numbers-in-java and modified by me
         betInput.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent ke) {
                if (ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9' || ke.getKeyCode() == KeyEvent.VK_BACK_SPACE){
@@ -77,8 +80,11 @@ public class Seat {
         cardsPanel.add(handPanel);
         cardsPanel.add(splitPanel);
 
-        handCards = new ArrayList<JLabel>();
-        splitCards = new ArrayList<JLabel>();
+        handCardsLabels = new ArrayList<JLabel>();
+        splitCardsLabels = new ArrayList<JLabel>();
+
+        handCards = new ArrayList<Card>();
+        splitCards = new ArrayList<Card>();
 
         mainPane.add(playerInfoPanel);
         mainPane.add(cardsPanel);
@@ -106,11 +112,12 @@ public class Seat {
      * @param card -- {@code Card} the card to add
      */
     public void addCard(Card card){
+        handCards.add(card);
+
         ImageIcon cardIcon = new ImageIcon(card.toImageLink());
 
-        handCards.add(new JLabel(cardIcon));
-        //System.out.println("added " + cardIcon);
-        handPanel.add(handCards.get(handCards.size() - 1));
+        handCardsLabels.add(new JLabel(cardIcon));
+        handPanel.add(handCardsLabels.get(handCardsLabels.size() - 1));
     }
 
     /**
@@ -118,26 +125,43 @@ public class Seat {
      * @param card -- {@code Card} the card to add
      */
     public void addSplit(Card card){
+        splitCards.add(card);
+
         ImageIcon cardIcon = new ImageIcon(card.toImageLink());
 
-        splitCards.add(new JLabel(cardIcon));
-        splitPanel.add(splitCards.get(splitCards.size() - 1));
+        splitCardsLabels.add(new JLabel(cardIcon));
+        splitPanel.add(splitCardsLabels.get(splitCardsLabels.size() - 1));
+    }
+
+    /**
+     * Changes the image of a card to either show or hide the card's face
+     * @param index -- {@code int} the index of the card in the seat to change
+     * @param visibility -- {@code boolean} whether or not the card is displayed face up
+     */
+    public void setCardVisible(int index, boolean visibility){
+        System.out.println(handCards.get(0));
+        ImageIcon icon = visibility ?
+        new ImageIcon(handCards.get(index).toImageLink())
+        : new ImageIcon(Card.CARD_BACK_URL);
+        
+
+        handCardsLabels.get(index).setIcon(icon);
     }
 
     /**
      * Removes all cards from the seat
      */
     public void clearCards(){
-        for(JLabel label: handCards){
+        for(JLabel label: handCardsLabels){
             handPanel.remove(label);
         }
 
-        for(JLabel label: splitCards){
+        for(JLabel label: splitCardsLabels){
             splitPanel.remove(label);
         }
 
-        handCards = new ArrayList<JLabel>();
-        splitCards = new ArrayList<JLabel>();
+        handCardsLabels = new ArrayList<JLabel>();
+        splitCardsLabels = new ArrayList<JLabel>();
     }
 
     /**

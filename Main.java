@@ -210,6 +210,7 @@ class Main{
                     }
                     dealer.addCard(deck.dealTopCard());
                     dealer.addCard(deck.dealTopCard());
+                    dealer.getSeat().setCardVisible(0, false);
 
                     current = -1;
                     for (Player p : players) {
@@ -403,6 +404,8 @@ class Main{
     }
 
     private void dealerTurn(){
+        dealer.getSeat().setCardVisible(0, true);
+
         while(dealer.getScore() < 17){
             dealer.addCard(deck.dealTopCard());
             //gameScreen.revalidate();
