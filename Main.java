@@ -245,7 +245,6 @@ class Main{
                        } else{
                         //the player and dealer have tied, so no bet is paid out
                        }
-                       //TODO: split payouts here
                        if(p.splitHandIsPlaying){
                             int splitValue = p.getSplitScore();
                             if((p.getHand().size() == 2) && (value == 21)) {
