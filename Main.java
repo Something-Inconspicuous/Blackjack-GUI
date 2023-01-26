@@ -104,10 +104,10 @@ class Main{
                 case "hit":
 
                     if(!player.isStood && !player.isBust){
-                       player.addCard(new Card(4, 2)); //testing
+                       player.addCard(deck.dealTopCard()); //testing
                        infoLabel.setText(player.getName() + "'s turn with " + player.getScore());
                     } else if(player.splitHandIsPlaying){
-                        player.addCardSplit(new Card(4, 2));
+                        player.addCardSplit(deck.dealTopCard());
                         infoLabel.setText(player.getName() + "'s split hand with " + player.getScore());
                     }
 
@@ -156,8 +156,8 @@ class Main{
                         if(player.getHand().get(0).getFace() == player.getHand().get(1).getFace()
                         && !player.splitHandIsPlaying){
                             player.split();
-                            player.addCard(new Card(4, 2));
-                            player.addCardSplit(new Card(4, 2));
+                            player.addCard(deck.dealTopCard());
+                            player.addCardSplit(deck.dealTopCard());
                             player.splitHandIsPlaying = true;
                         }
                     }
@@ -169,7 +169,7 @@ class Main{
                 case "double":
                     int s = player.getScore();
                     if(s >= 9 && s <= 11 && player.getHand().size() == 2){
-                        player.addCard(new Card(4, 2));
+                        player.addCard(deck.dealTopCard());
                         player.isStood = true;
                         player.setBet(player.getBetAmount()*2);
                     }
@@ -204,12 +204,12 @@ class Main{
                     deck.shuffle();
                     for (Player p : players) {
                         if(p.isPlaying){
-                            p.addCard(new Card(4, 2));
-                            p.addCard(new Card(4, 2)); 
+                            p.addCard(deck.dealTopCard());
+                            p.addCard(deck.dealTopCard()); 
                         }
                     }
-                    dealer.addCard(new Card(4, 2));
-                    dealer.addCard(new Card(4, 2));
+                    dealer.addCard(deck.dealTopCard());
+                    dealer.addCard(deck.dealTopCard());
 
                     current = -1;
                     for (Player p : players) {
@@ -404,7 +404,7 @@ class Main{
 
     private void dealerTurn(){
         while(dealer.getScore() < 17){
-            dealer.addCard(new Card(4, 2));
+            dealer.addCard(deck.dealTopCard());
             //gameScreen.revalidate();
         }
         
