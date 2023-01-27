@@ -24,6 +24,8 @@ class Main{
     private static ArrayList<Player> players = new ArrayList<Player>();
     private static Player dealer = new Player(0, "Dealer");
     private static Deck deck = new Deck();
+
+    private static boolean isInsurance = false;
     
 
     // TODO: design and create front end
@@ -57,6 +59,9 @@ class Main{
     JButton standButton;
     JButton splitButton;
     JButton doubleButton;
+
+    JButton insYesButton;
+    JButton insNoButton;
 
     public Main(){
         frame = new JFrame("Blackjack");
@@ -132,7 +137,6 @@ class Main{
                     break;
 
                 case "stand":
-                    //TODO: stand code
                     //player.getSeat().clearCards(); //testing
                     if(player.isStood || player.isBust && player.splitHandIsPlaying){
                         player.splitHandIsStood = true;
@@ -162,7 +166,6 @@ class Main{
                         }
                     }
                     
-                    //dealer.split();
                     gameScreen.revalidate();
                     break;
                 
@@ -173,7 +176,6 @@ class Main{
                         player.isStood = true;
                         player.setBet(player.getBetAmount()*2);
                     }
-                    //dealerTurn();
 
                     gameScreen.revalidate();
                     break;
@@ -223,6 +225,10 @@ class Main{
                     if(current != -1){
                         infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
                     }
+
+                    if(dealer.getHand().get(1).getFace() == 14 || dealer.getHand().get(1).getFace() == 1){
+                        enableInsurance();
+                    }
                     gameScreen.revalidate();
                     break;
 
@@ -240,9 +246,9 @@ class Main{
                        } else if(dealer.isBust) {
                             p.setChipsAmount(p.getChipsAmount() + p.getBetAmount());
                        } else if(value > dealerValue) {
-                            p.setChipsAmount(p.getBetAmount() + p.getScore());
+                            p.setChipsAmount(p.getChipsAmount() + p.getBetAmount());
                        } else if (value < dealerValue) {
-                            p.setChipsAmount(p.getBetAmount() - p.getScore());
+                            p.setChipsAmount(p.getChipsAmount() - p.getBetAmount());
                        } else{
                         //the player and dealer have tied, so no bet is paid out
                        }
@@ -255,9 +261,9 @@ class Main{
                             } else if(dealer.isBust) {
                                     p.setChipsAmount(p.getChipsAmount() + p.getBetAmount());
                             } else if(splitValue > dealerValue) {
-                                    p.setChipsAmount(p.getBetAmount() + p.getScore());
-                            } else if (value < dealerValue) {
-                                    p.setChipsAmount(p.getBetAmount() - p.getScore());
+                                    p.setChipsAmount(p.getChipsAmount() + p.getBetAmount());
+                            } else if (splitValue < dealerValue) {
+                                    p.setChipsAmount(p.getChipsAmount() - p.getBetAmount());
                             } else{
                                 //the player and dealer have tied, so no bet is paid out
                             }
@@ -267,8 +273,23 @@ class Main{
                        p.updateSeat();
                        //reset the player's bet to 0
                     }
+                    dealer.reset();
                     betting();
                     gameScreen.revalidate();
+                    break;
+
+                case "yes":
+                    if(dealer.getScore() == 21){
+                        player.setChipsAmount((int)(player.getBetAmount()/2) + player.getChipsAmount());
+                    } else{
+                        player.setChipsAmount((int)(player.getBetAmount()/2) - player.getChipsAmount());
+                    }
+                    endCurrentTurn();
+                    break;
+
+                case "no":
+                    endCurrentTurn();
+                    break;
             }
         }
     }
@@ -360,6 +381,19 @@ class Main{
         payoutBets.setActionCommand("payout");
         payoutBets.addActionListener(new Click());
         payoutBets.setVisible(false);
+        buttonsPanel.add(payoutBets);
+
+        insYesButton = new JButton("Yes");
+        insYesButton.setActionCommand("yes");
+        insYesButton.addActionListener(new Click());
+        insYesButton.setVisible(false);
+        buttonsPanel.add(insYesButton);
+
+        insNoButton = new JButton("No");
+        insNoButton.setActionCommand("no");
+        insNoButton.addActionListener(new Click());
+        insNoButton.setVisible(false);
+        buttonsPanel.add(insNoButton);
         
         infoPanel.add(infoLabel);
         infoPanel.add(submitBets);
@@ -389,7 +423,20 @@ class Main{
         current++;
         if(current >= MAX_PlAYER_COUNT){
             //the rounnd is over, move on to dealer's turn
-            dealerTurn();
+            if(isInsurance){
+                current = -1;
+                for (Player p : players) {
+                    //find the first playing player
+                    if(p.isPlaying){
+                        current = players.indexOf(p);
+                        break;
+                    }
+                }
+                isInsurance = false;
+                infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
+            } else{
+                dealerTurn();
+            }
         } else{
             //finds the next playing player
             
@@ -398,9 +445,17 @@ class Main{
             }
             if(current >= MAX_PlAYER_COUNT){
                 dealerTurn();
+            } else{
+                if(isInsurance){
+                    infoLabel.setText(players.get(current).getName() + ", would you like to make an insurance bet?");
+                } else{
+                    infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
+                }
             }
         }
-        infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
+        
+
+        
     }
 
     private void dealerTurn(){
@@ -413,9 +468,38 @@ class Main{
         
         if(dealer.getScore() > 21){
             infoLabel.setText("Dealer busts with " + dealer.getScore());
+            System.out.println("Dealer busts with " + dealer.getScore());
         } else{
             infoLabel.setText("Dealer stands with " + dealer.getScore());
+            System.out.println("Dealer stands with " + dealer.getScore());
         }
+
+        for(int i = 0; i < buttonsPanel.getComponentCount(); i++){
+            buttonsPanel.getComponent(i).setVisible(false);
+        }
+
         payoutBets.setVisible(true);
+        current = 0;
+    }
+
+    private void enableInsurance(){
+        isInsurance = true;
+        current = -1;
+        for (Player p : players) {
+            //find the first playing player
+            if(p.isPlaying){
+                current = players.indexOf(p);
+                break;
+            }
+        }
+
+        for(int i = 0; i < buttonsPanel.getComponentCount(); i++){
+            buttonsPanel.getComponent(i).setVisible(false);
+        }
+        insYesButton.setVisible(true);
+        insNoButton.setVisible(true);
+
+        infoLabel.setText(players.get(current).getName() + ", would you like to make an insurance bet?");
+
     }
 }

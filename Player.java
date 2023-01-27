@@ -85,6 +85,8 @@ public class Player {
     public void resetHands(){
         hand = new ArrayList<Card>();
         splitHand = new ArrayList<Card>();
+
+        seat.clearCards();
     }
 
     public void reset(){
