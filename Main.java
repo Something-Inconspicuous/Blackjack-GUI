@@ -211,7 +211,8 @@ class Main{
                         }
                     }
                     dealer.addCard(deck.dealTopCard());
-                    dealer.addCard(deck.dealTopCard());
+                    //dealer.addCard(deck.dealTopCard());
+                    dealer.addCard(new Card(3, 14));
                     dealer.getSeat().setCardVisible(0, false);
 
                     current = -1;
@@ -280,9 +281,9 @@ class Main{
 
                 case "yes":
                     if(dealer.getScore() == 21){
-                        player.setChipsAmount((int)(player.getBetAmount()/2) + player.getChipsAmount());
+                        player.setChipsAmount(player.getChipsAmount() + (int)(player.getBetAmount()/2) );
                     } else{
-                        player.setChipsAmount((int)(player.getBetAmount()/2) - player.getChipsAmount());
+                        player.setChipsAmount(player.getChipsAmount() - (int)(player.getBetAmount()/2) );
                     }
                     endCurrentTurn();
                     break;
@@ -420,6 +421,7 @@ class Main{
     }
 
     private void endCurrentTurn(){
+        System.out.println(dealer.getScore());
         current++;
         if(current >= MAX_PlAYER_COUNT){
             //the rounnd is over, move on to dealer's turn
@@ -434,6 +436,17 @@ class Main{
                 }
                 isInsurance = false;
                 infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
+                
+                //FIXME: this is supposed to make the game just reveal whether or not the dealer has blackjack
+                //but it doesn't work
+                if(dealer.getScore() == 21){
+                    dealerTurn();
+                    
+                } else{
+                    for (Player p : players) {
+                        p.updateSeat();
+                    }
+                }
             } else{
                 dealerTurn();
             }
@@ -444,7 +457,28 @@ class Main{
                 current++;
             }
             if(current >= MAX_PlAYER_COUNT){
-                dealerTurn();
+                if(isInsurance){
+                    current = -1;
+                    for (Player p : players) {
+                        //find the first playing player
+                        if(p.isPlaying){
+                            current = players.indexOf(p);
+                            break;
+                        }
+                    }
+                    isInsurance = false;
+
+                    insYesButton.setVisible(false);
+                    insNoButton.setVisible(false);
+                    hitButton.setVisible(true);
+                    standButton.setVisible(true);
+                    splitButton.setVisible(true);
+                    doubleButton.setVisible(true);
+
+                    infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
+                } else{
+                    dealerTurn();
+                }
             } else{
                 if(isInsurance){
                     infoLabel.setText(players.get(current).getName() + ", would you like to make an insurance bet?");
@@ -453,9 +487,6 @@ class Main{
                 }
             }
         }
-        
-
-        
     }
 
     private void dealerTurn(){
@@ -468,10 +499,8 @@ class Main{
         
         if(dealer.getScore() > 21){
             infoLabel.setText("Dealer busts with " + dealer.getScore());
-            System.out.println("Dealer busts with " + dealer.getScore());
         } else{
             infoLabel.setText("Dealer stands with " + dealer.getScore());
-            System.out.println("Dealer stands with " + dealer.getScore());
         }
 
         for(int i = 0; i < buttonsPanel.getComponentCount(); i++){

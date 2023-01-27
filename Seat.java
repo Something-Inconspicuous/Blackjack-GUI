@@ -139,7 +139,7 @@ public class Seat {
      * @param visibility -- {@code boolean} whether or not the card is displayed face up
      */
     public void setCardVisible(int index, boolean visibility){
-        System.out.println(handCards.get(0));
+        //System.out.println(handCards.get(0));
         ImageIcon icon = visibility ?
         new ImageIcon(handCards.get(index).toImageLink())
         : new ImageIcon(Card.CARD_BACK_URL);
