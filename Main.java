@@ -10,8 +10,6 @@ import java.awt.*;
 import java.util.ArrayList;
 
 class Main{
-    // TODO: make multiplayer
-    //TODO: betting
     // BACKEND
     public static final int MAX_PlAYER_COUNT = 8;
     public static final int DEFAULT_CHIPS = 100;
@@ -27,8 +25,6 @@ class Main{
 
     private static boolean isInsurance = false;
     
-
-    // TODO: design and create front end
     // FRONTEND
     // GridBagLayout is confusing, but it's fine
     GridBagLayout layout = new GridBagLayout();
@@ -211,8 +207,7 @@ class Main{
                         }
                     }
                     dealer.addCard(deck.dealTopCard());
-                    //dealer.addCard(deck.dealTopCard());
-                    dealer.addCard(new Card(3, 14));
+                    dealer.addCard(deck.dealTopCard());
                     dealer.getSeat().setCardVisible(0, false);
 
                     current = -1;
@@ -437,11 +432,8 @@ class Main{
                 isInsurance = false;
                 infoLabel.setText(players.get(current).getName() + "'s turn with " + players.get(current).getScore());
                 
-                //FIXME: this is supposed to make the game just reveal whether or not the dealer has blackjack
-                //but it doesn't work
                 if(dealer.getScore() == 21){
-                    dealerTurn();
-                    
+                    dealerTurn();                
                 } else{
                     for (Player p : players) {
                         p.updateSeat();
