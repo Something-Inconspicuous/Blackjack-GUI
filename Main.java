@@ -25,11 +25,7 @@ class Main{
 
     private static boolean isInsurance = false;
     
-    // FRONTEND
-    // GridBagLayout is confusing, but it's fine
-    GridBagLayout layout = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
-
+    //SECTION - FRONTEND
     JFrame frame;
     JLabel contentPane;
     
@@ -58,6 +54,7 @@ class Main{
 
     JButton insYesButton;
     JButton insNoButton;
+    //!SECTION
 
     public Main(){
         frame = new JFrame("Blackjack");
@@ -73,9 +70,10 @@ class Main{
         contentPane.add(gameScreen);
         
         gameScreen.setVisible(false);
+        gameScreen.setPreferredSize(new Dimension(1000, 900));
         frame.setContentPane(contentPane);
         frame.pack();
-        frame.setSize(1240, 860);
+        frame.setSize(1280, 900);
         frame.setVisible(true);
     }
 
@@ -100,12 +98,13 @@ class Main{
 
                     titleScreen.setVisible(false);
                     gameScreen.setVisible(true);
+                    frame.setMinimumSize(new Dimension(1240, 860));
                     break;
 
                 case "hit":
 
                     if(!player.isStood && !player.isBust){
-                       player.addCard(deck.dealTopCard()); //testing
+                       player.addCard(deck.dealTopCard());
                        infoLabel.setText(player.getName() + "'s turn with " + player.getScore());
                     } else if(player.splitHandIsPlaying){
                         player.addCardSplit(deck.dealTopCard());
@@ -173,10 +172,37 @@ class Main{
                         player.setBet(player.getBetAmount()*2);
                     }
 
+                    //stand
+                    if(player.isStood || player.isBust && player.splitHandIsPlaying){
+                        player.splitHandIsStood = true;
+                        endCurrentTurn();
+                    } else{
+                        player.isStood = true;
+                        if(!player.splitHandIsPlaying){
+                            endCurrentTurn();
+                        } else{
+                            infoLabel.setText(player.getName() + "'s split hand with " + player.getSplitScore());
+                        }
+                        
+                    }
+
                     gameScreen.revalidate();
                     break;
                 
                 case "submit":
+                    //check if anyone is playing, if not, then we ignore this input
+                    boolean noOneBetting = true;
+                    for(Player p : players){
+                        int pBet = p.getSeat().getBetInput();
+                        if(pBet > 0){
+                            noOneBetting = false;
+                            break;
+                        }
+                    }
+                    if(noOneBetting){
+                        break;
+                    }
+
                     hitButton.setVisible(true);
                     standButton.setVisible(true);
                     splitButton.setVisible(true);
@@ -190,12 +216,15 @@ class Main{
                             pBet = p.getChipsAmount();
                         }
                         if(p.isPlaying){
+                            noOneBetting = false;
                             p.setBet(pBet);
                         }
 
                         p.getSeat().setBetting(false);
                         p.updateSeat();
                     }
+
+
                     submitBets.setVisible(false);
 
                     deck = new Deck();
@@ -235,35 +264,38 @@ class Main{
                     for (Player p : players) {
                        int value = p.getScore();
                        int dealerValue = dealer.getScore();
+
+                       int wonChips = 0;
                        if((p.getHand().size() == 2) && (value == 21)) {
-                            p.setChipsAmount(p.getChipsAmount() + ((int)(p.getBetAmount() * 1.5))); 
+                            wonChips += ((int)(p.getBetAmount() * 1.5)); 
                        } else if(p.isBust) {
-                            p.setChipsAmount(p.getChipsAmount() - p.getBetAmount());
+                            wonChips -= p.getBetAmount();
                        } else if(dealer.isBust) {
-                            p.setChipsAmount(p.getChipsAmount() + p.getBetAmount());
+                            wonChips += p.getBetAmount();
                        } else if(value > dealerValue) {
-                            p.setChipsAmount(p.getChipsAmount() + p.getBetAmount());
+                            wonChips += p.getBetAmount();
                        } else if (value < dealerValue) {
-                            p.setChipsAmount(p.getChipsAmount() - p.getBetAmount());
+                            wonChips -= p.getBetAmount();
                        } else{
                         //the player and dealer have tied, so no bet is paid out
                        }
                        if(p.splitHandIsPlaying){
                             int splitValue = p.getSplitScore();
                             if((p.getHand().size() == 2) && (value == 21)) {
-                                    p.setChipsAmount(p.getChipsAmount() + ((int)(p.getBetAmount() * 1.5))); 
+                                wonChips += ((int)(p.getBetAmount() * 1.5)); 
                             } else if(p.isBust) {
-                                    p.setChipsAmount(p.getChipsAmount() - p.getBetAmount());
+                                wonChips -= p.getBetAmount();
                             } else if(dealer.isBust) {
-                                    p.setChipsAmount(p.getChipsAmount() + p.getBetAmount());
+                                wonChips += p.getBetAmount();
                             } else if(splitValue > dealerValue) {
-                                    p.setChipsAmount(p.getChipsAmount() + p.getBetAmount());
+                                wonChips += p.getBetAmount();
                             } else if (splitValue < dealerValue) {
-                                    p.setChipsAmount(p.getChipsAmount() - p.getBetAmount());
+                                wonChips -= p.getBetAmount();
                             } else{
-                                //the player and dealer have tied, so no bet is paid out
+                             //the player and dealer have tied, so no bet is paid out
                             }
                        }
+                       p.setChipsAmount(p.getChipsAmount() + wonChips);
                        p.setBet(0);
                        p.reset();
                        p.updateSeat();
@@ -291,7 +323,7 @@ class Main{
     }
 
     private static void runGUI(){
-        JFrame.setDefaultLookAndFeelDecorated(true);
+        JFrame.setDefaultLookAndFeelDecorated(false);
         new Main();
     }
   
@@ -311,24 +343,13 @@ class Main{
     //SECTION screen build methods
     private void buildTitleScreen(){
         titleScreen = new JPanel();
-        //titleScreen.setLayout(null);
-        titleScreen.setLayout(layout);
 
         titleLabel = new JLabel("Blackjack");
         //titleLabel.setBounds(100, 30, 120, 50);
 
         startButton = new JButton("GO!");
-
-        gbc.insets = new java.awt.Insets(0, 0, 50, 0);
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        layout.setConstraints(titleLabel, gbc);
         titleScreen.add(titleLabel);
 
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        layout.setConstraints(startButton, gbc);
         startButton.addActionListener(new Click());
         startButton.setActionCommand("start");
         titleScreen.add(startButton);
@@ -416,7 +437,6 @@ class Main{
     }
 
     private void endCurrentTurn(){
-        System.out.println(dealer.getScore());
         current++;
         if(current >= MAX_PlAYER_COUNT){
             //the rounnd is over, move on to dealer's turn
@@ -482,6 +502,7 @@ class Main{
     }
 
     private void dealerTurn(){
+        dealer.isBust = false;
         dealer.getSeat().setCardVisible(0, true);
 
         while(dealer.getScore() < 17){
@@ -491,6 +512,7 @@ class Main{
         
         if(dealer.getScore() > 21){
             infoLabel.setText("Dealer busts with " + dealer.getScore());
+            dealer.isBust = true;
         } else{
             infoLabel.setText("Dealer stands with " + dealer.getScore());
         }

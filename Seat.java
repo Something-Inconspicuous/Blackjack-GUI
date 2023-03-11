@@ -46,9 +46,11 @@ public class Seat {
 
         betInput = new JTextField(10);
         betInput.setVisible(false);
+
         //this piece of code was found at 
         //https://www.tutorialspoint.com/how-can-we-make-jtextfield-accept-only-numbers-in-java and modified by me
         betInput.addKeyListener(new KeyAdapter() {
+            @Override
             public void keyPressed(KeyEvent ke) {
                if (ke.getKeyChar() >= '0' && ke.getKeyChar() <= '9' || ke.getKeyCode() == KeyEvent.VK_BACK_SPACE){
                   betInput.setEditable(true);
@@ -57,6 +59,28 @@ public class Seat {
                }
             }
          });
+
+         //this piece of code was found at
+         //https://stackoverflow.com/questions/16213836/java-swing-jtextfield-set-placeholder
+        betInput.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (betInput.getText().equals("Bet")) {
+                    betInput.setText("");
+                    betInput.setForeground(Color.BLACK);
+                }
+            }
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (betInput.getText().isEmpty()) {
+                    betInput.setForeground(Color.GRAY);
+                    betInput.setText("Bet");
+                }
+            }
+         });
+        betInput.setForeground(Color.GRAY);
+        betInput.setText("Bet");
+        
         
         
         chipsLabel = new JLabel("Chips: ");
@@ -179,7 +203,7 @@ public class Seat {
      */
     public int getBetInput(){
         String bet = betInput.getText();
-        if(bet.equals("")){
+        if(bet.equals("") || bet.equals("Bet")){
             return -1;
         }
         return Integer.parseInt(bet);
